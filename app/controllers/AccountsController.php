@@ -8,7 +8,8 @@ use \lithium\action\Controller;
 
 use app\models\Security\Membership;
 use app\models\Security\MembershipUser;	
-use app\models\Instructor;	
+use app\models\Instructor;
+	
 use notes\web\FormCollection;
 use notes\security\Sentinel;
 
@@ -33,7 +34,8 @@ class AccountsController extends Controller{
 	
 	public function create_user(){
 		
-		$user = $this->input->post('membershipuser', true);
+		$this->em = Connections::get('default')->getEntityManager();
+		$user = $this->request->data['membershipuser'];
 		$sen = new Sentinel();
 		
 		$memUser = $sen->createUser($user['username'],$user['password'],$user['email'], $user['firstname'], $user['lastname']); 
@@ -87,7 +89,7 @@ class AccountsController extends Controller{
 			
 			$succ = setcookie('SiteToken', $usr->getId(), 0, '/', '', FALSE);
 			//echo "Return value of setting cookie: " . $succ;
-			$this->redirect('dashboard/Dashboard::index');
+			$this->redirect('/dashboard/');
 		}else{
 			$this->set(array('status'=>'fail'));
 		}
@@ -102,7 +104,7 @@ class AccountsController extends Controller{
 				'secure' => TRUE
 		);
 		//$this->input->set_cookie($cookie);
-		$succ = setcookie('SiteToken', '', 0, time() - 3600, '', FALSE);
+		$succ = setcookie('SiteToken', '', time() - 3600, '/', FALSE);
 		$this->redirect('Pages::index');
 	}
 	

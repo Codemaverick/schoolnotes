@@ -61,7 +61,7 @@
 			<?php } else { ?>
 				<p>This class has no published homeworks. <br/>
 			<?php } ?>
-			<?php echo $this->html->link("Create a homework", 'dashboard/homeworks/create/' . $cs->getId()); ?></p>
+			<?php echo $this->html->link("Create homework", 'dashboard/homeworks/create/' . $cs->getId()); ?></p>
 		</div>
 		</article>
 		<article>
@@ -80,7 +80,7 @@
 			<?php } else { ?>
 				<p>This class has no published announcements. <br/>
 			<?php } ?>
-			<?php echo $this->html->link('dashboard/announcements/create/' . $cs->getId() , "Post an announcement"); ?></p>
+			<?php echo $this->html->link("Post an announcement",'dashboard/announcements/create/' . $cs->getId()); ?></p>
 		</div>
 		</article>
 	</div>
