@@ -10,15 +10,7 @@
 		</div>
 	</div>
 	<div class="shell_profile">
-		<div class="image_placeholder">
-		
-		</div>
-		<div class="mini_profile">
-			<?php //echo $model->professor->getFullName(); ?>
-			<p>Associate Professor</p>
-			<p>Department of Computer Science</p>
-			<p><?php echo $this->html->link("Update Your Profile", "instructors/profile"); ?></p>
-		</div>
+		<?= $this->_render('element', 'profile_panel'); ?>
 	</div>
 	<div class="shell_courses">
 		<h3>Spring 2011<!-- Update with correct dynamic semester --></h3>
@@ -71,9 +63,9 @@
 				 if(($model->announcements) && (count($model->announcements) > 0)){ ?>
 				<ul>
 					<?php foreach($model->announcements as $anncmt){ ?>
-						<li><?php echo $this->html->link('dashboard/announcements/show/' . $anncmt->getId(), $anncmt->getTitle()); ?><br/>
-							<?php echo $this->html->link('dashboard/announcements/edit/'. $anncmt->getId(),"Update"); ?> | 
-							<?php echo $this->html->link('dashboard/announcements/delete/'. $anncmt->getId(),"Delete"); ?>
+						<li><?php echo $this->html->link($anncmt->getTitle(),'dashboard/announcements/show/' . $anncmt->getId()); ?><br/>
+							<?php echo $this->html->link("Update", 'dashboard/announcements/edit/'. $anncmt->getId()); ?> | 
+							<?php echo $this->html->link("Delete", 'dashboard/announcements/delete/'. $anncmt->getId()); ?>
 						</li>
 					<?php } ?>
 				</ul>

@@ -5,12 +5,15 @@ namespace app\controllers;
 use \lithium\data\Connections;
 use \lithium\action\Controller;
 
-use models\Announcement, models\CourseSection, models\Instructor;	
-use models\ViewModels\DashboardVM;
-use models\ViewModels\CourseVM;
+use app\models\Announcement, app\models\CourseSection;
+use app\models\Homework, app\models\Instructor;	
+use app\models\ViewModels\DashboardVM;
+use app\models\ViewModels\CourseVM;
 
 use notes\web\FormCollection;
 use notes\security\Sentinel;
+use \DateTime;
+
 
 class AnnouncementsController extends Controller{
 
@@ -92,18 +95,18 @@ class AnnouncementsController extends Controller{
 	public function show($Id)
 	{
 		$em = Connections::get('default')->getEntityManager();
-		$course = $em->getRepository('app\models\Course')->find($courseId);
+		$dbContext = $em->getRepository('app\models\Announcement');
 		$sContext = $em->getRepository('app\models\CourseSection');
 		
-		$homework = new Homework();
-		$hw = $dbContext->find($Id);
+		$ann = new Announcement();
+		$a = $dbContext->find($Id);
 		//echo var_dump($sc);
-		if($hw != null){
-			$homework = $hw;
+		if($a != null){
+			$ann = $a;
 			$data = array();
-			$data['homework'] = $homework;
-			$data['section'] = $homework->getCourseSection();			
-			$data['course'] = $homework->getCourseSection()->getCourse();
+			$data['announcement'] = $ann;
+			$data['section'] = $ann->getCourseSection();			
+			$data['course'] = $ann->getCourseSection()->getCourse();
 			//var_dump($section->getCourse());
 			
 			return $this->set($data);

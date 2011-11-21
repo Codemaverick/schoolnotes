@@ -10,16 +10,7 @@
 		</div>
 	</div>
 	<div class="shell_profile">
-		<div class="image_placeholder">
-		
-		</div>
-		<div class="mini_profile">
-			<?php echo $model->professor->getUser()->getFullName(); ?>
-			<p>Associate Professor</p>
-			<p>Department of Computer Science</p>
-			<p><?php echo $this->html->link("Update Your Profile","dashboard/profiles/show"); ?></p>
-			<p><?php echo $this->html->link("Change Password", "dashboard/profiles/passcode"); ?></p>
-		</div>
+		<?= $this->_render('element', 'profile_panel'); ?>
 	</div>
 	<div class="shell_courses">
 		<h3>Spring 2011<!-- Update with correct dynamic semester --></h3>

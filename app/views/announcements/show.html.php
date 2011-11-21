@@ -1,19 +1,12 @@
-<h1><?php echo $course->getName() . " - " . $note->getCourseSection()->getSection(); ?></h1>
+<h1><?= $course->getName() . " - " . $section->getSection(); ?></h1>
 
-<h3><?php echo $note->getName() ?></h3>
-<h4><?php echo $note->getCourseSection()->getSemester()->getName(); ?></h4>
+<h3><?= $announcement->getTitle() ?></h3>
+<h4><?= $announcement->getCourseSection()->getSemester()->getName(); ?></h4>
 <div>
-	
-		<div class="formItem">
-			Name:
-			<?php echo $note->getNote(); ?>
-		</div>
-		<div class="formItem">
-			Attachments:
-			<?php //echo $school->getAddress(); ?>
-		</div>
-	
+	<div class="formItem">
+		<p><?= $announcement->getText(); ?></p>
+	</div>
 </div>
 <div>
-	<p><?php echo anchor("/dashboard/courseview/show/". $note->getCourseSection()->getId(),"Back to Index"); ?></p>
+	<p><?= $this->html->link("Back to Index","/dashboard/courseview/show/". $announcement->getCourseSection()->getId()); ?></p>
 </div>

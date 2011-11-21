@@ -8,6 +8,7 @@ class ProfileVM
 {
 	public $instructor;
 	public $profile;
+	public $user;
 	
 }
 

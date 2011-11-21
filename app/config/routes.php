@@ -70,6 +70,12 @@ Router::connect('/dashboard', array('controller' => 'Dashboard', 'action'=>'inde
 
 Router::connect('/dashboard/{:args}', array(), array('continue' => true));
 
+// Dashboard routing...
+
+Router::connect('/admin', array('controller' => 'Admin', 'action'=>'index'));
+Router::connect('/admin/{:args}', array(), array('continue' => true));
+
+
 
 
 /**

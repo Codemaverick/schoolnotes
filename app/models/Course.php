@@ -2,6 +2,7 @@
  
 namespace app\models;
  
+use \Doctrine\Common\Collections\ArrayCollection;
 /**
  * @Entity
  */
@@ -43,6 +44,10 @@ class Course
 	 * @OneToMany(targetEntity="CourseSection", mappedBy="Course")
 	 */
 	private $section;
+	
+	public function __construct(){
+		$this->section = new ArrayCollection();
+	}
 	
     public function getId() { return $this->id; }
     public function setId($id) { $this->id = $id; }

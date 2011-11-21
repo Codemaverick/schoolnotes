@@ -39,7 +39,7 @@
 						
 					<?php } ?>
 				</ul>
-			<?php } else { ?>
+			<?php } else{ ?>
 				<p>This class has no published class notes.</p>
 			<?php } ?>
 			
@@ -71,7 +71,7 @@
 				<ul>
 					<?php foreach($model->announcements as $anncmt){ ?>
 						<li>
-						<?php echo $this->html->link('/professors/'. $user->getUserName() . '/announcements/show/' . $anncmt->getId(), $anncmt->getTitle()); ?><br/>
+						<?php echo $this->html->link($anncmt->getTitle(),'/professors/'. $user->getUserName() . '/announcements/show/' . $anncmt->getId()); ?><br/>
 						</li>
 					<?php } ?>
 				</ul>
