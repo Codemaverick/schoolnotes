@@ -11,7 +11,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="description" content="">
-    <meta name="author" content="SchoolNotes">
+    <meta name="author" content="SchoolNotes - Profiles">
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
     <!--[if lt IE 9]>
@@ -20,7 +20,7 @@
 
     <!-- Le styles -->
 	<?php echo $this->html->charset();?>
-	<title>Application > <?php echo $this->title(); ?></title>
+	<title>Profiles <?php echo $this->title(); ?></title>
 	<?php echo $this->html->style(array('bootstrap','notestyle','debug', 'lithium')); ?>
 	<?php echo $this->scripts(); ?>
 	<?php echo $this->html->link('Icon', null, array('type' => 'icon')); ?>
@@ -40,14 +40,17 @@
       </div>
     </div>
   
-	<div class="container">
+	<div class="container" class="profiles">
 		
 		<?php echo $this->content(); ?>
 		
-		<footer>
-			<p>Powered by <?php echo $this->html->link('Lithium', 'http://lithify.me/'); ?>.</p>
-		</footer>
 	</div> <!-- /container -->
+	
+	<footer>
+	<div class="container" id="footer">
+			<p>Powered by <?php echo $this->html->link('Lithium', 'http://lithify.me/'); ?>.</p>
+	</div>
+	</footer>
 
 </body>
 </html>

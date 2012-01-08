@@ -14,7 +14,7 @@ use notes\security\Sentinel;
 			print "</ul>";
 		}else{
 			//print "<a href='/accounts/login' class='' title='Log In'> Log In </a>";
-		    echo $this->html->link('Log In', 'Accounts::login');
+		    echo $this->html->link('Log In', '/accounts/login');
         }
 			
 	//}

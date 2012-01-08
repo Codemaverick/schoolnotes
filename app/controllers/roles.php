@@ -1,30 +1,37 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php  
 
 	/**
 	 * Index Page for this controller.
 	 *
 	 */
-use models\Security\Role;	
-use models\ViewModels\DashboardVM;
+namespace app\controllers;
 
-class Roles extends Controller{
+use app\models\Security\Role;	
+use app\models\ViewModels\DashboardVM;
+
+use \lithium\data\Connections;
+use \lithium\action\Controller;
+
+class RolesController extends Controller{
 
 	private $dbContext;
-	public function __construct()
-	{
-		parent::__construct();
+	
+	public function ___construct(array $config = array()){
+		parent::__construct($config);
 		
-		$this->dbContext = $this->em->getRepository('models\Security\Role');
-		$this->userContext = $this->em->getRepository('models\Security\MembershipUser');
+		$this->em = Connections::get('default')->getEntityManager();
+		$this->dbContext = $this->em->getRepository('app\models\Security\Role');
+		$this->userContext = $this->em->getRepository('app\models\Security\MembershipUser');
 		
 	}
 	
 	public function index(){
 		
-		$roles = $this->dbContext->findAll();
+		$em = Connections::get('default')->getEntityManager();
+		$roles = $dbContext->findAll();
 		
 		$data['roles'] = $roles;
-		return $this->render($data);
+		$this->set($data);
 		
 	}
 	
@@ -34,25 +41,30 @@ class Roles extends Controller{
 	}
 	
 	public function create_new(){
-		$coll = new FormCollection($this->input->post('role', true));
+		$em = Connections::get('default')->getEntityManager();
+		
+		$coll = new FormCollection($this->request->data['role']);
 		$role = $coll->createObject('Security\\Role'); //need to escape path;
 		//print_r($role);
-		$this->em->persist($role);
-		$this->em->flush();
-		redirect('/dashboard/roles/');
+		$em->persist($role);
+		$em->flush();
+		$this->redirect('/dashboard/roles/');
 	}
 	
 	public function show($Id)
 	{
+		$em = Connections::get('default')->getEntityManager();
+		$dbContext = $em->getRepository('app\models\Security\Role');
+		
 		$role = new Role();
-		$r = $this->dbContext->find($Id);
+		$r = $dbContext->find($Id);
 		//echo var_dump($sc);
 		if($r != null){
 			$role = $r;
 			$data = array();
 			$data['role'] = $phone;
 						
-			return $this->render($data);
+			$this->set($data);
 		}//else throw 404
 	
 	}

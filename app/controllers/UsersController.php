@@ -61,6 +61,7 @@ class UsersController extends Controller{
 			
 			$data['model'] = $dashVM;
 			$this->set($data);
+			$this->render(array('layout'=>'profiles'));
 		}
 	}
 	

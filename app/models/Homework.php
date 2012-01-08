@@ -45,6 +45,13 @@ class Homework
 	 */
 	private $text;
 	
+	/**
+	 * @ManyToOne(targetEntity="app\Models\Security\MembershipUser")
+	 */
+	private $createdBy;
+	
+	
+	
 	public function __construct() {
         $this->attachments = new \Doctrine\Common\Collections\ArrayCollection();
     } 
@@ -65,6 +72,8 @@ class Homework
     public function getName() {  return $this->name; }
     public function setText($txt) { $this->text = $txt; }
     public function getText() {  return $this->text; }
+    public function getCreatedBy(){ return $this->createdBy; }
+    public function setCreatedBy($value) { $this->createdBy = $value; }
 
 
 }

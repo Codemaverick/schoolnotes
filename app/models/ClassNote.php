@@ -45,6 +45,14 @@ class ClassNote
 	*/
 	private $name;
 	
+	/**
+	* @ManyToOne(targetEntity="app\Models\Security\MembershipUser")
+	*/
+	private $createdBy;
+	
+	
+	//private $status (active/archived); - do I need this?
+	
 	
 	public function __construct() {
         $this->attachments = new \Doctrine\Common\Collections\ArrayCollection();
@@ -64,5 +72,7 @@ class ClassNote
     public function getNote() { return $this->note; }
     public function setName($name) { $this->name = $name; }
     public function getName() { return $this->name; }
+    public function getCreatedBy(){ return $this->createdBy; }
+    public function setCreatedBy($value) { $this->createdBy = $value; }
 
 }

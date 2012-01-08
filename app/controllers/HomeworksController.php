@@ -52,7 +52,14 @@ class HomeworksController extends Controller{
 	}
 	
 	public function create_new(){
-	
+		
+		$sen = new Sentinel();	
+		$user = $sen->getLoggedInUser();
+		
+		if(!$user){
+			$this->redirect('Accounts::login');
+		}
+		
 		$em = Connections::get('default')->getEntityManager();
 		$sContext = $em->getRepository('app\models\CourseSection');
 		$coll = new FormCollection($this->request->data['homework']);
@@ -66,7 +73,7 @@ class HomeworksController extends Controller{
 		//try catch block?
 		$hw->setDateDue(new DateTime($coll->getItem('dateDue')));
 		$hw->setDateCreated(new DateTime("now"));
-		
+		$hw->setCreatedBy($user);
 		//var_dump($note->getDateCreated());
 		
 		$em->persist($hw);

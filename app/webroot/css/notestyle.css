@@ -1,0 +1,16 @@
+BODY{
+	margin-top:50px;
+}
+
+.h_nav{
+	list-style-type: none;
+}
+
+.h_nav LI{
+	display:inline;
+}
+
+/* Profile Navigation */
+#profile_nav{
+	margin-top:60px;
+}

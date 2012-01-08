@@ -1,4 +1,12 @@
 <?php $this->title($model->professor->getUser()->getFullName()); ?>
+<div class="row profile_header">
+	<div class="span8">
+		<h1><?= $model->professor->getUser()->getFullName() ?></h1>
+	</div>
+	<div class="span8">
+		<?php echo $this->_render('element', 'profile_nav'); ?>
+	</div>
+</div>
 <div class="shell">
 	<div class="shell_header">
 		<div class="shell_branding">

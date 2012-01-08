@@ -28,6 +28,7 @@ class HomeController extends \lithium\action\Controller{
 		$professors = $this->insContext->findAll();
 		$courses = $this->dbContext->findAll();
 		
+		
 		//print_r($_COOKIE);
 		
 		$data = array('instructors'=>$professors, 'courses'=>$courses);

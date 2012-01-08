@@ -3,7 +3,7 @@
 
 <section class="triptych">
 	<p>
-		SchoolNotes is your centralized resource for the class notes, assignments, 
+		Hello There! SchoolNotes is your centralized resource for the class notes, assignments, 
 		due dates and resources supplied by your professor.
 	</p>
 	<p>

@@ -23,6 +23,7 @@ use lithium\core\Environment;
 
 
 use notes\security\Sentinel;
+use app\models\Instructor;	
 /**
  * Here, we are connecting `'/'` (the base path) to controller called `'Pages'`,
  * its action called `view()`, and we pass a param to select the view file
@@ -38,7 +39,35 @@ Router::connect('/', 'Pages::index');
 //Profile Pages
 
 Router::connect("/professors/{:username}", array('controller'=>'Users'));
-Router::connect('/professors/{:username}/{:args}', array(), array('continue' => true));
+Router::connect("/professors/{:username}/{:controller}", array(), array('continue'=> true,'handler'=> function($request){
+	$username = $request->params['username'];
+ 	//echo "Request Username = " . $request->params['username'];
+ 	//echo "Request Controller = " . $request->params['controller'];
+ 	
+	$sen = new Sentinel();
+	$results = $sen->findUsersByName($username);
+		//echo var_dump($username);
+	if($results && is_array($results)){
+		$user = $results[0];
+		$request->params['user'] = $user;
+		$request->params['action'] = "listAll";
+		return $request;
+	}else{
+		echo "User not found. Returning";
+		return $request;
+	}
+	
+	
+	//$request->params['action'] = "display";
+	//print_r($request);
+	//return $request;
+})
+
+);
+//Router::connect('/professors/{:username}/{:args}', array(), array('continue' => true));
+
+//Router::connect("/professors/{:username}/notes)", array('controller'=> 'Users','action'=>'notes')
+//Router::connect('/professors/{:username}/{:args}', array(), array('continue' => true));
 /*
 Router::connect("/{:username}", array(), function($request) {
 		$location = array('controller'=>'Users', 'action'=>'index');
@@ -48,21 +77,6 @@ Router::connect("/{:username}", array(), function($request) {
 */
 
 
-/*
-Router::connect("/professors/{:username}/{:controller}", array(), array(
-	'continue' => true, 'handler' => function($request) {
-	$conditions = array('username' => $request->username);
- 
-	$user = $request->username;
- 		
-	if (!Sentinel::getUserInfo($user)) {
-		return $request;
-	}
-	$location = array('controller'=>$request->controller, 'action'=>'index');
-	return new Response(compact('location'));
-}
-));
-*/
 
 // Dashboard routing...
 
