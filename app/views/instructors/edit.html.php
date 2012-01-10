@@ -5,7 +5,7 @@
 	<form method="post" action="/instructors/update">
 		<div class="formItem">
 			<label>Username</label>
-			<?php echo $user->getUserName(); ?>
+			<p><?php echo $user->getUserName(); ?></p>
 		</div>
 		<div class="formItem">
 			<label>Email</label>
@@ -20,6 +20,14 @@
 			<input type="text" id="instructor_lastname" name="membershipuser[lastname]" value="<?php echo $user->getLastName(); ?>" />
 		</div>
 		<div class="formItem">
+			<label>Department</label>
+			<?= $this->form->select('instructor[department]', $departments); ?>
+		</div>
+		<div class="formItem">
+			<label>Permissions</label>
+			<?= $this->form->select('membershipuser[role]', $roles, $role_options); ?>
+		</div>
+		<div class="formItem">
 			<input type="hidden" name="instructor[id]" value="<?php echo $instructor->getId() ?>" />
 			<input type="submit" id="submitBtn" value="Update" />
 		</div>
@@ -27,5 +35,5 @@
 	</form>
 </div>
 <div>
-	<?php echo anchor('/instructors', "Back to List"); ?>
+	<?php echo $this->html->link("Back to List",'/instructors'); ?>
 </div>

@@ -53,27 +53,38 @@ class ClassNotesController extends Controller{
 		$userContext = $em->getRepository('app\models\Security\MembershipUser');
 		$classContext = $em->getRepository('app\models\CourseSection');
 		//$instructor
-		//ideally, should be as simple as this
-		$prof = $userContext->find($user->getId());
-		$query = $em->createQuery('SELECT n FROM app\models\ClassNote n WHERE n.createdBy = :usr');
-		$query->setParameter('usr', $prof);
-		$notes = $query->getResult();
 		
 		$query2 = $em->createQuery('SELECT s FROM app\models\Instructor s WHERE s.user = :usr');
 		$query2->setParameter('usr', $user);
 		$results = $query2->getResult();
+		$instr = $results[0];
+		
+		//ideally, should be as simple as this
+		$prof = $userContext->find($user->getId());
+		$query = $em->createQuery('SELECT n FROM app\models\ClassNote n WHERE n.createdBy = :usr');
+		$query->setParameter('usr', $instr);
+		$notes = $query->getResult();
 		
 		//get list of classes taught by this professor
 		$query3 = $em->createQuery('SELECT cs FROM app\models\CourseSection cs WHERE cs.instructor = :ins');
-		$query3->setParameter('ins', $prof);
+		$query3->setParameter('ins', $instr);
 		$courses = $query3->getResult();
+		
+		$query4 = $em->createQuery('SELECT pr FROM app\models\Profile pr WHERE pr.instructor = :ins');
+		$query4->setParameter('ins', $instr);
+		$pResults = $query4->getResult();
+
 			
 		$dashVM = new DashboardVM();
 		$dashVM->professor = $results[0];
+		if($pResults){
+			$dashVM->profile = $pResults[0];
+		}
 		
 		$data['model'] = $dashVM;
 		$data['notes'] = $notes;
 		$data['courses'] = $courses;
+		
 		$this->set($data);
 		$this->render(array('layout'=>'profiles'));
 	}
@@ -91,12 +102,8 @@ class ClassNotesController extends Controller{
 	
 	public function create_new(){
 	
-		$sen = new Sentinel();	
-		$user = $sen->getLoggedInUser();
-		
-		if(!$user){
-			$this->redirect('Accounts::login');
-		}
+		$user = Sentinel::getAuthenticatedUser();
+		if(!$user){ $this->redirect('Accounts::login');}
 	
 		$em = Connections::get('default')->getEntityManager();
 		$sContext = $em->getRepository('app\models\CourseSection');

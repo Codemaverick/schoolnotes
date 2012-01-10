@@ -57,6 +57,7 @@ class Instructor
 	
 	public function __construct(){
 		$this->courses = new ArrayCollection();
+		$this->department = new ArrayCollection();
 	}
 	
 	public function getId() { return $this->id; }
@@ -67,6 +68,7 @@ class Instructor
     public function getSchool() { return $this->school; }
     public function setDepartment($department) { $this->department = $department; }
     public function getDepartment() {  return $this->department; }
+    public function addDepartment($dept){ $this->department->add($dept); }
 	public function setOffice($office){ $this->office = $office; }
 	public function getOffice(){ return $this->office; }
 	public function setBuilding($building){ $this->building = $building; }

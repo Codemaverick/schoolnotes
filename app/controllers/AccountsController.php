@@ -92,6 +92,7 @@ class AccountsController extends Controller{
 			$this->redirect('/dashboard/');
 		}else{
 			$this->set(array('status'=>'fail'));
+			return $this->render(array('template'=>'login'));
 		}
 		
 	}

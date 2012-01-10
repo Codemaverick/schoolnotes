@@ -40,6 +40,11 @@ class Announcement
 	 */
 	private $text;
 	
+	/**
+	 * @ManyToOne(targetEntity="app\Models\Security\MembershipUser")
+	 */
+	private $createdBy;
+	
 	
     public function getId() { return $this->id; }
     public function setId($id) { $this->id = $id; }
@@ -55,6 +60,8 @@ class Announcement
     public function getTitle() {  return $this->title; }
     public function setText($txt) { $this->text = $txt; }
     public function getText() {  return $this->text; }
+    public function getCreatedBy(){ return $this->createdBy; }
+    public function setCreatedBy($value) { $this->createdBy = $value;}
 
 
 }

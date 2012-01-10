@@ -9,7 +9,13 @@ namespace app\controllers;
 use \lithium\data\Connections;
 use \lithium\action\Controller;
 
-use app\models\Instructor;	 
+use app\models\Instructor;
+use app\models\Security\Role;
+
+use notes\security\RoleManager;
+use notes\security\Sentinel;
+use notes\web\FormCollection;	
+use \Doctrine\Common\Collections\ArrayCollection; 
 
 class InstructorsController extends Controller{
 
@@ -19,10 +25,10 @@ class InstructorsController extends Controller{
 	{
 		parent::__construct($config);
 		
-		$this->dbContext = $this->em->getRepository('models\Instructor');
-		$this->memContext = $this->em->getRepository('models\Security\MembershipUser');
+		$this->dbContext = $this->em->getRepository('app\models\Instructor');
+		$this->memContext = $this->em->getRepository('app\models\Security\MembershipUser');
 		
-		$this->configContext = $this->em->getRepository('models\Configuration');
+		$this->configContext = $this->em->getRepository('app\models\Configuration');
 		$res = $this->configContext->findAll();
 		$this->configSettings = $res[0];
 
@@ -31,7 +37,7 @@ class InstructorsController extends Controller{
 		$user = $sen->getLoggedInUser();
 		
 		if(!$user){
-			redirect('/accounts/login');
+			$this->redirect('/accounts/login');
 
 		}
 		
@@ -49,12 +55,26 @@ class InstructorsController extends Controller{
 	
 	public function create()
 	{
+		$sen = new Sentinel();
+		$user = $sen->getLoggedInUser();
+		
+		if(!$user){
+			$this->redirect('/accounts/login');
+
+		}
 		$data = array('school'=>$this->configSettings->getSchool());
 		
-		return $this->render($data);
+		return $this->set($data);
 	}
 	
 	public function create_new(){
+		
+		$sen = new Sentinel();
+		$user = $sen->getLoggedInUser();
+		if(!$user){ $this->redirect('/accounts/login'); }
+		
+		$em = Connections::get('default')->getEntityManager();
+		
 		$user = $this->request->data['membershipuser'];
 		$coll = new FormCollection($this->request->data['instructor']);
 		$sen = new Sentinel();
@@ -67,15 +87,19 @@ class InstructorsController extends Controller{
 		$ins = new Instructor();
 		$ins->setUser($newuser);
 		$ins->setOffice($coll->getItem('office'));
-		$this->em->persist($ins); //persist object
-		$this->em->flush();
+		$em->persist($ins); //persist object
+		$em->flush();
 		
-		redirect('/instructors/index');
+		$this->redirect('/instructors/index');
 		
 	}
 	
 	public function show($Id)
 	{
+		$sen = new Sentinel();
+		$user = $sen->getLoggedInUser();
+		if(!$user){ $this->redirect('/accounts/login'); }
+		
 		$instructor = new Instructor();
 		$em = Connections::get('default')->getEntityManager();
 		$ins = $em->find('app\models\Instructor', $Id);
@@ -89,21 +113,49 @@ class InstructorsController extends Controller{
 	
 	public function edit($Id)
 	{
+		$user = Sentinel::getAuthenticatedUser();
+		if(!$user){ $this->redirect('/accounts/login'); }
+		
 		$em = Connections::get('default')->getEntityManager();
+		$roleContext = $em->getRepository('app\models\Security\Role');
 		$instructor = new Instructor();
-		$ins = $em->find('models\Instructor', $Id);
+		$ins = $em->find('app\models\Instructor', $Id);
+		$deptList = $em->getRepository('app\models\Department')->findAll();
 		//echo var_dump($sc);
+		$depts = array();
+		foreach($deptList as $d){
+			$depts[$d->getId()] = $d->getName();
+		}
+		
+		$userRoles = $roleContext->findAll();
+		$roles = array();
+		foreach($userRoles as $r){
+			$roles[$r->getId()] = $r->getRoleName();
+		}
+		
+		//regular user role
+		$regUser = $roleContext->findOneBy(array('roleName'=>'User'));
+		$role_options = array('id'=>'user_role', 'value' => $regUser->getId());
 		
 		if($ins != null){
 			$instructor = $ins;
-			$this->set(array('instructor' => $instructor, 'user'=>$ins->getUser()));
+			$this->set(array('instructor' => $instructor, 
+							'user'=>$ins->getUser(), 
+							'departments'=> $depts, 
+							'roles' => $roles,
+							'role_options'=> $role_options
+						));
 		}
 
 	}
 	
 	public function update()
 	{
+		$user = Sentinel::getAuthenticatedUser();
+		if(!$user){ $this->redirect('/accounts/login'); }
+
 		$em = Connections::get('default')->getEntityManager();
+		$deptContext = $em->getRepository('app\models\Department');
 		$instructor = $this->request->data['instructor'];
 		$coll = new FormCollection($instructor);
 		$userColl = new FormCollection($this->request->data['membershipuser']);
@@ -113,19 +165,28 @@ class InstructorsController extends Controller{
 				//echo "Id of updated object is " . $Id;
 		
 		if($Id != null){
-			$ins = $em->find('models\Instructor', $Id);
-			$username = $ins->getUser()->getUsername();
-			$user = $sen->getUser($username);
+			$ins = $em->find('app\models\Instructor', $Id);
+			$userId = $ins->getUser()->getId();
+			$mUser = $em->getRepository('app\models\Security\MembershipUser')->find($userId);
+			$oldRoles = $mUser->getRoles();
 			
-			$userUpd = $userColl->updateObject('MembershipUser',$user);
-			$insUpd = $coll->updateObject('Instructor', $ins);
-			//var_dump($school);
+			//if user previously had roles, remove them
+			foreach($oldRoles as $r){
+				//RoleManager::removeUserFromRole($mUser, $r);
+			}
 			
-			$sen->updateUser($userUpd);
-			$em->persist($insUpd);
-			$em->flush();
-			$this->redirect('/instructors/index');
+			$userUpd = $userColl->updateObject('MembershipUser',$mUser);
+			//print_r($userUpd->getRoles());
 			
+			//$insUpd = $coll->updateObject('Instructor', $ins);
+			
+			//$dept = $deptContext->find($coll->getItem('department'));
+			
+			//get selected role
+			//$selectedRole = $em->getRepository('app\models\Security\Role')->find($userColl->getItem('role'));
+			
+			//$this->redirect('/instructors/index');
+			exit();
 		}else{
 			return $this->edit($Id);
 		}
@@ -134,37 +195,46 @@ class InstructorsController extends Controller{
 	
 	public function delete($Id)
 	{
+		$user = Sentinel::getAuthenticatedUser();
+		if(!$user){ $this->redirect('/accounts/login'); }
+
+		$em = Connections::get('default')->getEntityManager();
 		$instructor = new Instructor();
-		$ins = $this->em->find('models\Instructor', $Id);
+		$ins = $em->find('app\models\Instructor', $Id);
 		//echo var_dump($sc);
 		
 		if($ins != null){
 			$instructor = $ins;
 			$data = array('instructor' => $instructor, 'user'=>$ins->getUser());
-			return $this->render($data);
+			return $this->set($data);
 		}
 	}
 	
 	public function destroy()
 	{
-		$insObj = $this->input->post('instructor', true);
+		$user = Sentinel::getAuthenticatedUser();
+		if(!$user){ $this->redirect('/accounts/login'); }
+
+		$em = Connections::get('default')->getEntityManager();
+		$dbContext = $em->getRepository('app\models\Instructor');
+		$insObj = $this->request->data('instructor', true);
 		$coll = new FormCollection($insObj);
 		
 		$Id = $insObj['id'];
 		$sen = new Sentinel();
-		echo "Id of object is " . $Id;
+		//echo "Id of object is " . $Id;
 		
 		if($Id != null){
-			$ins = $this->dbContext->find($Id);
+			$ins = $dbContext->find($Id);
 			$username = $ins->getUser()->getUsername();
-			$instructor = $this->em->remove($ins);
-			$this->em->flush();
+			$instructor = $em->remove($ins);
+			$em->flush();
 			
 			//remove associated user
 			$sen->deleteUser($username); 
 		}
 		
-		redirect('/instructors/'); 
+		$this->redirect('Instructors::index'); 
 	}
 	
 	

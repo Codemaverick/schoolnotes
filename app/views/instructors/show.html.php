@@ -20,6 +20,12 @@
 			Email:
 			<?php echo $user->getEmail(); ?>
 		</div>
+		<div class="formItem">
+			Department:
+			<?php foreach($instructor->getDepartment() as $dept){ ?>
+				<?=  $dept->getName(); ?>
+			<?php } ?>
+		</div>
 </div>
 
 <div class="formItem">

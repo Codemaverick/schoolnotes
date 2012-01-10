@@ -102,6 +102,20 @@ class ProfilesController extends Controller{
 		
 	}
 	
+	public function listAll(){
+	
+		$user = $this->request->params['user'];
+		$em = Connections::get('default')->getEntityManager();
+		
+		$model = $this->getProfileView($user);
+		$model->professor = $model->instructor;
+		$data = array('model'=> $model);
+		
+		$this->set($data);
+		$this->render(array('layout'=>'profiles'));
+	}
+	
+	
 	public function edit()
 	{
 		//should be logged in, do not need to get id from querystring
@@ -133,6 +147,7 @@ class ProfilesController extends Controller{
 		
 		$prObj = $this->request->data['profile'];
 		$prColl = new FormCollection($prObj);
+		//print_r($prObj);
 		
 		$insId = $insObj['id'];
 		$em = Connections::get('default')->getEntityManager();
@@ -176,11 +191,9 @@ class ProfilesController extends Controller{
 			$ph->add($nums);
 		}
 		
-		$prf = $prColl->updateObject('Profile', $prf);
-		$prf->setPhoneNumbers($ph);
+		$prfUpd = $prColl->updateObject('Profile', $prf);
+		$prfUpd->setPhoneNumbers($ph);
 		//$prf->setOfficeHours(new ArrayCollection());
-		
-		
 		
 		//delete any existing office hours 
 		$query2 = $em->createQuery('SELECT oh FROM app\models\OfficeHour oh WHERE oh.profile = :profile');
@@ -209,10 +222,10 @@ class ProfilesController extends Controller{
 			$offH->add($hr);
 		}
 		
-		$prf->setOfficeHours($offH);
+		$prfUpd->setOfficeHours($offH);
 		
 		//print_r($prf);
-		$em->persist($prf);
+		$em->persist($prfUpd);
 		$em->flush();
 		
 		$this->redirect('/dashboard/profiles/show');

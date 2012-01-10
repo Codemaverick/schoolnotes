@@ -19,7 +19,7 @@
 			<input type="text" name="instructor[office]" id="instructor_office" value="<?= $model->instructor->getOffice() ?>" />
 		</div>
 		<div class="formItem">
-			<label>Title (Professor/Associate Professor):</label>
+			<label>Title(s) (ex: Professor/Associate Professor):</label>
 			<input type="text" name="profile[title]" id="profile_title" value="<?php echo $model->profile->getTitle(); ?>" />
 		</div>
 		<div class="formItem">

@@ -32,4 +32,5 @@ BODY{
 
 .formItem LABEL{
 	text-align:left;
+	width:auto;
 }
