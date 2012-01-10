@@ -57,7 +57,13 @@ class UsersController extends Controller{
 				$dashVM->courses->add($sec->getCourse());
 			}
 			
+			$query2 = $this->em->createQuery('SELECT pr FROM app\models\Profile pr WHERE pr.instructor = :ins');
+			$query2->setParameter('ins', $this->prof);
+			$pResults = $query2->getResult();
 			//$dashVM->courses = $courses;
+			if($pResults){
+				$dashVM->profile = $pResults[0];
+			}
 			
 			$data['model'] = $dashVM;
 			$this->set($data);
@@ -71,7 +77,7 @@ class UsersController extends Controller{
 	}
 	
 	public function create_new(){
-		$coll = new FormCollection($this->input->post('school', true));
+		$coll = new FormCollection($this->request->data['school']);
 		$school = $coll->createObject('School');
 		//var_dump($school);
 		
@@ -106,7 +112,7 @@ class UsersController extends Controller{
 	
 	public function update()
 	{
-		$schoolObj = $this->input->post('school', true);
+		$schoolObj = $this->request->data['school'];
 		$coll = new FormCollection($schoolObj);
 		
 		$Id = $schoolObj['id'];

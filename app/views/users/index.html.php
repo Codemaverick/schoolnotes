@@ -1,34 +1,12 @@
 <?php $this->title($model->professor->getUser()->getFullName()); ?>
 <div class="row profile_header">
-	<div class="span8">
-		<h1><?= $model->professor->getUser()->getFullName() ?></h1>
-	</div>
-	<div class="span8">
-		<?php echo $this->_render('element', 'profile_nav'); ?>
-	</div>
+	<?php echo $this->_render('element', 'profile_nav'); ?>
 </div>
-<div class="shell">
-	<div class="shell_header">
-		<div class="shell_branding">
-		<h3>City College of New York</h3>
-	
-		</div>
-		<div class="shell_nav">
-			<?php echo $this->html->link("Archived Courses","/courses/archived"); ?>
-		</div>
+<div class="row shell">
+	<div class="shell_profile span-one-third">
+		<?php echo $this->_render('element', 'profile_public_panel'); ?>
 	</div>
-	<div class="shell_profile">
-		<div class="image_placeholder">
-		
-		</div>
-		<div class="mini_profile">
-			<?php echo $model->professor->getUser()->getFullName(); ?>
-			<p>Associate Professor</p>
-			<p>Department of Computer Science</p>
-			
-		</div>
-	</div>
-	<div class="shell_courses">
+	<div class="shell_courses span-two-third">
 		<h3>Spring 2011<!-- Update with correct dynamic semester --></h3>
 		<h4>Current Courses </h4>
 		<ul class="course_list">
@@ -40,7 +18,6 @@
 			}
 			
 			 ?>
-			 </ul>
+		</ul>
 	</div>
-	<div class="clearfix"></div>
 </div>

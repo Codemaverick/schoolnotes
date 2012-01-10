@@ -139,85 +139,86 @@ class ProfilesController extends Controller{
 		//get the instructor
 		$pv = $this->getProfileView($user);
 		$prf = $pv->profile;
+		
 		if(!$prf->getInstructor()){ //new profile. All new profiles require instructors
 			$prf = new Profile();
 			$prf->setInstructor($pv->instructor);
 			$em->persist($prf);
 			$em->flush();
 		}
-		$prf = $prColl->updateObject('Profile', $prf);
 		
-		if($prColl->getItem('phoneNumber')){
-			//means that a phone number was added or edited.
-			//first, remove all phone numbers
-			$query = $em->createQuery('SELECT p FROM app\models\PhoneNumber p WHERE p.profile = :profile');
-			$query->setParameter('profile', $prf);
-			$results = $query->getResult();
-			//print_r($results);
-			
-			
-			if($results){
-				$em->remove($results[0]);
-				$em->flush();
-				/*foreach($results as $num){
-					$em->remove($num);
-					$em->flush();
-				}
-				*/
-			}
-			
-			//create new phone numbers - this should be a loop
-			/*
-			$ph = new PhoneNumber();
-			$ph->setNumber($prColl->getItem('phoneNumber'));
-			$ph->setProfile($prf);
-			$em->persist($ph);
-			$em->flush();
+		$instructorID = $insColl->getItem('id');
+		$instructor = $em->find('app\models\Instructor', $instructorID);
+		$insUpdate = $insColl->updateObject('Instructor', $instructor);
+		$em->persist($insUpdate);
+		$em->flush();
+		
+		//delete any existing phone numbers
+		$query = $em->createQuery('SELECT n FROM app\models\PhoneNumber n WHERE n.profile = :profile');
+		$query->setParameter('profile', $prf);
+		$numbers = $query->getResult();
 
-			$phones = new ArrayCollection();
-			$phones->add($ph);
-			$prf->setPhoneNumbers($phones);*/
-		}
-		/*
-		if($prColl->getItem('officeHour')){
-			//means that an office hour was added or edited.
-			//first, remove all office hours
-			$query = $this->em->createQuery('SELECT oh FROM app\models\OfficeHour oh WHERE oh.profile = :profile');
-			$query->setParameter('profile', $prf);
-			$results = $query->getResult();
-			
-			if($results){
-				foreach($results as $hr){
-					$this->em->remove($hr);
-				}
-				$this->em->flush();
+		if($numbers){
+			foreach($numbers as $num){
+				$em->remove($num);
+				$em->flush();
 			}
-			//create new phone numbers - also should be looped
-			$officeH = new OfficeHour();
-			$officeH->setStartTime(new DateTime('now'));
-			$endtime = new DateTime('now');
-			$endtime->add(new DateInterval('PT1H'));
-			$officeH->setEndTime($endtime);
-			$officeH->setProfile($prf);
-			$em->persist($officeH);
-			$em->flush();	
-			
-			$hrs = new ArrayCollection();
-			$hrs->add($officeH);
-			$prf->setOfficeHours($hrs);	
 		}
-		*/
-		//Upload stub
-		//TODO:Upload
 		
-		//print_r($prf->getTitle());
-		//print_r($prf->getBio());
-		//$em->persist($prf);
-		//$em->flush();
+		$ph = new ArrayCollection();
+		if($prColl->getItem('phoneNumber')){
+			$nums = new PhoneNumber();
+			$nums->setNumber($prColl->getItem('phoneNumber'));
+			$nums->setProfile($prf);
+			$em->persist($nums);
+			$em->flush();
+			
+			$ph->add($nums);
+		}
 		
-		//$this->redirect('/dashboard/profiles/show');
+		$prf = $prColl->updateObject('Profile', $prf);
+		$prf->setPhoneNumbers($ph);
+		//$prf->setOfficeHours(new ArrayCollection());
 		
+		
+		
+		//delete any existing office hours 
+		$query2 = $em->createQuery('SELECT oh FROM app\models\OfficeHour oh WHERE oh.profile = :profile');
+		$query2->setParameter('profile', $prf);
+		$hours = $query2->getResult();
+
+		if($hours){
+			foreach($hours as $hr){
+				$em->remove($hr);
+				$em->flush();
+			}
+		}
+		
+		
+		$offH = new ArrayCollection();
+		
+		if($prColl->getItem('officeHour')){
+			$OHours = $prColl->getItem('officeHour');
+			$hr = new OfficeHour();
+			$hr->setStartTime($OHour['startTime']);
+			$hr->setEndTime($OHour['endTime']);
+			$hr->setProfile($prf);
+			$em->persist($hr);
+			$em->flush();
+			
+			$offH->add($hr);
+		}
+		
+		$prf->setOfficeHours($offH);
+		
+		//print_r($prf);
+		$em->persist($prf);
+		$em->flush();
+		
+		$this->redirect('/dashboard/profiles/show');
 	}
+	
+	
 	/*
 	public function delete($Id)
 	{

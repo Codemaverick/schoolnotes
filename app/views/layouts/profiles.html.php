@@ -40,7 +40,7 @@
       </div>
     </div>
   
-	<div class="container" class="profiles">
+	<div class="container profiles_container">
 		
 		<?php echo $this->content(); ?>
 		

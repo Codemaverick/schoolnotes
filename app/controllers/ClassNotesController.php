@@ -13,6 +13,7 @@ use app\models\ClassNote, models\Department, models\Instructor;
 use app\models\ViewModels\DashboardVM;
 use app\models\ViewModels\CourseVM;
 use notes\web\FormCollection;
+use notes\utilities\AppUtilities;
 use \DateTime;
 
 class ClassNotesController extends Controller{
@@ -50,6 +51,7 @@ class ClassNotesController extends Controller{
 		$em = Connections::get('default')->getEntityManager();
 		$dbContext = $em->getRepository('app\models\ClassNote');
 		$userContext = $em->getRepository('app\models\Security\MembershipUser');
+		$classContext = $em->getRepository('app\models\CourseSection');
 		//$instructor
 		//ideally, should be as simple as this
 		$prof = $userContext->find($user->getId());
@@ -60,12 +62,18 @@ class ClassNotesController extends Controller{
 		$query2 = $em->createQuery('SELECT s FROM app\models\Instructor s WHERE s.user = :usr');
 		$query2->setParameter('usr', $user);
 		$results = $query2->getResult();
+		
+		//get list of classes taught by this professor
+		$query3 = $em->createQuery('SELECT cs FROM app\models\CourseSection cs WHERE cs.instructor = :ins');
+		$query3->setParameter('ins', $prof);
+		$courses = $query3->getResult();
 			
 		$dashVM = new DashboardVM();
 		$dashVM->professor = $results[0];
 		
 		$data['model'] = $dashVM;
 		$data['notes'] = $notes;
+		$data['courses'] = $courses;
 		$this->set($data);
 		$this->render(array('layout'=>'profiles'));
 	}

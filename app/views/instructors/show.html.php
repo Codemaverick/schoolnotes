@@ -23,5 +23,5 @@
 </div>
 
 <div class="formItem">
-	<?php echo anchor("instructors/index", "Back to Index"); ?>
+	<?php echo $this->html->link("Back to Index","instructors/index"); ?>
 </div>

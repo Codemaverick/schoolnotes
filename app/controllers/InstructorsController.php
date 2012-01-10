@@ -55,8 +55,8 @@ class InstructorsController extends Controller{
 	}
 	
 	public function create_new(){
-		$user = $this->input->post('membershipuser', true);
-		$coll = new FormCollection($this->input->post('instructor', true));
+		$user = $this->request->data['membershipuser'];
+		$coll = new FormCollection($this->request->data['instructor']);
 		$sen = new Sentinel();
 		
 		$memUser = $sen->createUser($user['username'],$user['password'],$user['email'], $user['firstname'], $user['lastname']); 
@@ -77,40 +77,43 @@ class InstructorsController extends Controller{
 	public function show($Id)
 	{
 		$instructor = new Instructor();
-		$ins = $this->em->find('models\Instructor', $Id);
+		$em = Connections::get('default')->getEntityManager();
+		$ins = $em->find('app\models\Instructor', $Id);
 		//echo var_dump($sc);
 		
 		if($ins != null){
 			$instructor = $ins;
-			return $this->render(array('instructor' => $instructor, 'user'=>$ins->getUser()));
+			$this->set(array('instructor' => $instructor, 'user'=>$ins->getUser()));
 		}
 	}
 	
 	public function edit($Id)
 	{
+		$em = Connections::get('default')->getEntityManager();
 		$instructor = new Instructor();
-		$ins = $this->em->find('models\Instructor', $Id);
+		$ins = $em->find('models\Instructor', $Id);
 		//echo var_dump($sc);
 		
 		if($ins != null){
 			$instructor = $ins;
-			return $this->render(array('instructor' => $instructor, 'user'=>$ins->getUser()));
+			$this->set(array('instructor' => $instructor, 'user'=>$ins->getUser()));
 		}
 
 	}
 	
 	public function update()
 	{
-		$instructor = $this->input->post('instructor', true);
+		$em = Connections::get('default')->getEntityManager();
+		$instructor = $this->request->data['instructor'];
 		$coll = new FormCollection($instructor);
-		$userColl = new FormCollection($this->input->post('membershipuser', true));
+		$userColl = new FormCollection($this->request->data['membershipuser']);
 		
 		$Id = $instructor['id'];
 		$sen = new Sentinel();
 				//echo "Id of updated object is " . $Id;
 		
 		if($Id != null){
-			$ins = $this->em->find('models\Instructor', $Id);
+			$ins = $em->find('models\Instructor', $Id);
 			$username = $ins->getUser()->getUsername();
 			$user = $sen->getUser($username);
 			
@@ -119,9 +122,9 @@ class InstructorsController extends Controller{
 			//var_dump($school);
 			
 			$sen->updateUser($userUpd);
-			$this->em->persist($insUpd);
-			$this->em->flush();
-			redirect('/instructors/index');
+			$em->persist($insUpd);
+			$em->flush();
+			$this->redirect('/instructors/index');
 			
 		}else{
 			return $this->edit($Id);

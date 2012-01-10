@@ -2,6 +2,13 @@ BODY{
 	margin-top:50px;
 }
 
+.row.shell > [class*="span"] {
+  display: inline;
+  float: left;
+  margin-left: 19px; /* Need this for the margin */
+}
+
+
 .h_nav{
 	list-style-type: none;
 }
@@ -13,4 +20,16 @@ BODY{
 /* Profile Navigation */
 #profile_nav{
 	margin-top:60px;
+}
+
+.profiles_container .shell{
+	border:solid 1px #ccc;
+}
+
+.shell_profile{
+	margin-top:25px;
+}
+
+.formItem LABEL{
+	text-align:left;
 }
