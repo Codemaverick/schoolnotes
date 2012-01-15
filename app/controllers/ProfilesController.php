@@ -31,59 +31,7 @@ class ProfilesController extends Controller{
 		$this->userId = 1;
 	
 	}
-	/*
-	public function index($id){
-		
-		$sen = new Sentinel();
-		$user = $sen->getLoggedInUser(); 
-		
-		if(!$user){
-			$this->redirect("Accounts::LogOn");
-		}
-		
-		$em = Connections::get('default')->getEntityManager();
-		$sContext = $em->getRepository('app\models\CourseSection');
-		$model = new CourseViewVM();
 	
-		$model->coursesection = $this->section->find($id);
-		$model->course = $model->coursesection->getCourse();
-		
-		$model->classnotes = $this->notesContext->findAll();
-		$model->homeworks = $this->hwContext->findAll();
-		$model->announcements = $this->annContext->findAll();
-		
-		$data['model'] = $model;
-		return $this->render($data);
-		
-	}
-	*/
-	/*	
-	public function create_new(){
-		$formItems = $this->input->post('course', true);
-		$coll = new FormCollection($formItems);
-		$course = $coll->createObject('Course');
-		//echo var_dump($course);
-		
-		$query = $this->em->createQuery('SELECT s FROM models\School s WHERE s.id = :id');
-		$query->setParameter('id', 1);
-		$schools = $query->getResult();
-		$course->setSchool($schools[0]);
-		
-		//$course->setDepartment(null);
-		
-		$query = $this->em->createQuery('SELECT s FROM models\Department s WHERE s.id = :id');
-		$query->setParameter('id', $formItems['department']);
-		$depts = $query->getResult();
-		$course->setDepartment($depts[0]);
-		
-		$course->setSection(null);
-		
-		$this->em->persist($course);
-		$this->em->flush();
-		redirect('/departments/courses/'.$depts[0]->getId());
-		
-	}
-	*/
 	public function show()
 	{
 		//should be logged in, do not need to get id from querystring
@@ -138,19 +86,19 @@ class ProfilesController extends Controller{
 		$sen = new Sentinel();
 		$user = $sen->getLoggedInUser(); 
 		
-		if(!$user){
-			$this->redirect("Accounts::LogOn");
-		}
+		if(!$user){ $this->redirect("Accounts::LogOn");}
 		
 		$insObj = $this->request->data['instructor'];
 		$insColl = new FormCollection($insObj);
 		
 		$prObj = $this->request->data['profile'];
 		$prColl = new FormCollection($prObj);
-		//print_r($prObj);
 		
-		$insId = $insObj['id'];
 		$em = Connections::get('default')->getEntityManager();
+		
+		//print_r($prObj)
+		$insId = $insObj['id'];
+		
 		//get the instructor
 		$pv = $this->getProfileView($user);
 		$prf = $pv->profile;
@@ -232,6 +180,87 @@ class ProfilesController extends Controller{
 	}
 	
 	
+	private function getProfileView(MembershipUser $user){
+		
+		$em = Connections::get('default')->getEntityManager();
+		
+		$model = new ProfileVM();
+		
+		$qry = $em->createQuery('SELECT i FROM app\models\Instructor i WHERE i.user = :usr');
+		$qry->setParameter('usr', $user);
+		$results = $qry->getResult();
+		
+		$model->instructor = $results[0];
+		$model->user = $model->instructor->getUser();
+		
+		$query = $em->createQuery('SELECT p FROM app\models\Profile p WHERE p.instructor = :ins');
+		$query->setParameter('ins', $model->instructor);
+		$results = $query->getResult();
+		if(is_array($results)&&(count($results) > 0)){
+			$model->profile = $results[0];
+		}else{
+			$model->profile = new Profile();
+		}
+				
+		return $model;
+
+	}
+	
+	/*
+	public function index($id){
+		
+		$sen = new Sentinel();
+		$user = $sen->getLoggedInUser(); 
+		
+		if(!$user){
+			$this->redirect("Accounts::LogOn");
+		}
+		
+		$em = Connections::get('default')->getEntityManager();
+		$sContext = $em->getRepository('app\models\CourseSection');
+		$model = new CourseViewVM();
+	
+		$model->coursesection = $this->section->find($id);
+		$model->course = $model->coursesection->getCourse();
+		
+		$model->classnotes = $this->notesContext->findAll();
+		$model->homeworks = $this->hwContext->findAll();
+		$model->announcements = $this->annContext->findAll();
+		
+		$data['model'] = $model;
+		return $this->render($data);
+		
+	}
+	*/
+	/*	
+	public function create_new(){
+		$formItems = $this->input->post('course', true);
+		$coll = new FormCollection($formItems);
+		$course = $coll->createObject('Course');
+		//echo var_dump($course);
+		
+		$query = $this->em->createQuery('SELECT s FROM models\School s WHERE s.id = :id');
+		$query->setParameter('id', 1);
+		$schools = $query->getResult();
+		$course->setSchool($schools[0]);
+		
+		//$course->setDepartment(null);
+		
+		$query = $this->em->createQuery('SELECT s FROM models\Department s WHERE s.id = :id');
+		$query->setParameter('id', $formItems['department']);
+		$depts = $query->getResult();
+		$course->setDepartment($depts[0]);
+		
+		$course->setSection(null);
+		
+		$this->em->persist($course);
+		$this->em->flush();
+		redirect('/departments/courses/'.$depts[0]->getId());
+		
+	}
+	*/
+	
+	
 	/*
 	public function delete($Id)
 	{
@@ -262,31 +291,6 @@ class ProfilesController extends Controller{
 		redirect('/courses/');
 	}
 	*/
-	private function getProfileView(MembershipUser $user){
-		
-		$em = Connections::get('default')->getEntityManager();
-		
-		$model = new ProfileVM();
-		
-		$qry = $em->createQuery('SELECT i FROM app\models\Instructor i WHERE i.user = :usr');
-		$qry->setParameter('usr', $user);
-		$results = $qry->getResult();
-		
-		$model->instructor = $results[0];
-		$model->user = $model->instructor->getUser();
-		
-		$query = $em->createQuery('SELECT p FROM app\models\Profile p WHERE p.instructor = :ins');
-		$query->setParameter('ins', $model->instructor);
-		$results = $query->getResult();
-		if(is_array($results)&&(count($results) > 0)){
-			$model->profile = $results[0];
-		}else{
-			$model->profile = new Profile();
-		}
-				
-		return $model;
-
-	}
 	
 	
 }

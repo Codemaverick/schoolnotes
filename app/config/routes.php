@@ -24,6 +24,8 @@ use lithium\core\Environment;
 
 use notes\security\Sentinel;
 use app\models\Instructor;	
+use notes\security\RoleManager;
+
 /**
  * Here, we are connecting `'/'` (the base path) to controller called `'Pages'`,
  * its action called `view()`, and we pass a param to select the view file
@@ -84,10 +86,16 @@ Router::connect('/dashboard', array('controller' => 'Dashboard', 'action'=>'inde
 
 Router::connect('/dashboard/{:args}', array(), array('continue' => true));
 
-// Dashboard routing...
+//Admin routing...
+$user = Sentinel::getAuthenticatedUser();
+if(($user)&&(RoleManager::IsUserInRole($user,'Administrator' ))) { 
+	Router::connect('/admin', array('controller' => 'Admin', 'action'=>'index'));
+	Router::connect('/admin/{:args}', array(), array('continue' => true));
+}else{
+	Router::connect('/admin', array('controller' => 'Accounts', 'action'=>'login'));
+	Router::connect('/admin/{:args}', array('controller' => 'Accounts', 'action'=>'login'));
 
-Router::connect('/admin', array('controller' => 'Admin', 'action'=>'index'));
-Router::connect('/admin/{:args}', array(), array('continue' => true));
+}
 
 
 

@@ -119,7 +119,7 @@ class InstructorsController extends Controller{
 		$em = Connections::get('default')->getEntityManager();
 		$roleContext = $em->getRepository('app\models\Security\Role');
 		$instructor = new Instructor();
-		$ins = $em->find('app\models\Instructor', $Id);
+		$ins = $em->getRepository('app\models\Instructor')->find($Id);
 		$deptList = $em->getRepository('app\models\Department')->findAll();
 		//echo var_dump($sc);
 		$depts = array();
@@ -134,8 +134,16 @@ class InstructorsController extends Controller{
 		}
 		
 		//regular user role
-		$regUser = $roleContext->findOneBy(array('roleName'=>'User'));
-		$role_options = array('id'=>'user_role', 'value' => $regUser->getId());
+		$selectedRole = null;
+		if($ins->getUser()->getRoles()->count() > 0){
+			$userRoles = $ins->getUser()->getRoles();
+			$selectedRole = $userRoles[0];
+		}else{
+			$selectedRole = $roleContext->findOneBy(array('roleName'=>'User'));
+		}
+		
+		$role_options = array('id'=>'user_role', 'value' => $selectedRole->getId());
+		$dept_options = array('id'=>'instructor_department', 'value' => $ins->getDepartments()->get(0));
 		
 		if($ins != null){
 			$instructor = $ins;
@@ -153,43 +161,56 @@ class InstructorsController extends Controller{
 	{
 		$user = Sentinel::getAuthenticatedUser();
 		if(!$user){ $this->redirect('/accounts/login'); }
+		
+		$mUserParams = $this->request->data['membershipuser'];
+		$mUserCollection = new FormCollection($mUserParams);
+		
+		$insParams = $this->request->data['instructor'];
+		$insCollection = new FormCollection($insParams);
+		
+		$insID = $insCollection->getItem('id');
+		//echo "Instructor Id = : " . $userID;
 
 		$em = Connections::get('default')->getEntityManager();
-		$deptContext = $em->getRepository('app\models\Department');
-		$instructor = $this->request->data['instructor'];
-		$coll = new FormCollection($instructor);
-		$userColl = new FormCollection($this->request->data['membershipuser']);
+		$instructor = $em->getRepository('app\models\Instructor')->find($insID);
+		$userContext = $em->getRepository('app\models\Security\MembershipUser');
+		$mUser = $instructor->getUser();
+		$currentRoles = $mUser->getRoles();
 		
-		$Id = $instructor['id'];
-		$sen = new Sentinel();
-				//echo "Id of updated object is " . $Id;
-		
-		if($Id != null){
-			$ins = $em->find('app\models\Instructor', $Id);
-			$userId = $ins->getUser()->getId();
-			$mUser = $em->getRepository('app\models\Security\MembershipUser')->find($userId);
-			$oldRoles = $mUser->getRoles();
-			
-			//if user previously had roles, remove them
-			foreach($oldRoles as $r){
-				//RoleManager::removeUserFromRole($mUser, $r);
-			}
-			
-			$userUpd = $userColl->updateObject('MembershipUser',$mUser);
-			//print_r($userUpd->getRoles());
-			
-			//$insUpd = $coll->updateObject('Instructor', $ins);
-			
-			//$dept = $deptContext->find($coll->getItem('department'));
-			
-			//get selected role
-			//$selectedRole = $em->getRepository('app\models\Security\Role')->find($userColl->getItem('role'));
-			
-			//$this->redirect('/instructors/index');
-			exit();
-		}else{
-			return $this->edit($Id);
+		//department - for now, only one department is allowed
+		$userDep = $em->getRepository('app\models\Department')->find($insCollection->getItem('department'));
+		foreach($instructor->getDepartments() as $dep){
+			$instructor->getDepartments()->removeElement($dep);
 		}
+		$em->persist($instructor);
+		$em->flush();
+		
+		$instructor->addDepartment($userDep);
+		$em->persist($instructor);
+		
+		//echo "Current number of roles is : " . count($currentRoles);
+		
+		if(count($currentRoles) > 0){
+			foreach($currentRoles as $cRole)
+				RoleManager::removeUserFromRole($mUser, $cRole);
+		}
+	
+		$currentRoles = $mUser->getRoles();
+		//echo "Current number of roles after remove is : " . count($currentRoles);
+		
+		$roleID = $mUserCollection->getItem('role');
+		$mUserRole = $em->getRepository('app\models\Security\Role')->find($roleID);
+		
+		$mUpdatedUser = $mUserCollection->updateObject('MembershipUser', $mUser);
+		$mUpdatedUser->getRoles()->add($mUserRole);
+		$em->persist($mUpdatedUser);
+		$em->flush();
+		
+		RoleManager::addUsersToRole(array($mUser), $mUserRole);
+		
+		
+		
+		$this->redirect('/instructors/index');
 		
 	}
 	

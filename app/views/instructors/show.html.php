@@ -22,7 +22,7 @@
 		</div>
 		<div class="formItem">
 			Department:
-			<?php foreach($instructor->getDepartment() as $dept){ ?>
+			<?php foreach($instructor->getDepartments() as $dept){ ?>
 				<?=  $dept->getName(); ?>
 			<?php } ?>
 		</div>

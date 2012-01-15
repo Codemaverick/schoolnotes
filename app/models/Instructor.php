@@ -66,8 +66,9 @@ class Instructor
     public function setUser($user) { $this->user = $user; } 
     public function setSchool($school) { $this->school = $school; }
     public function getSchool() { return $this->school; }
-    public function setDepartment($department) { $this->department = $department; }
-    public function getDepartment() {  return $this->department; }
+    public function setDepartments($department) { $this->department = $department; }
+    public function getDepartments() {  return $this->department; }
+    public function getDepartment() { return $this->department->count() > 0 ? $this->department->get(0) : null; }
     public function addDepartment($dept){ $this->department->add($dept); }
 	public function setOffice($office){ $this->office = $office; }
 	public function getOffice(){ return $this->office; }

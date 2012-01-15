@@ -11,17 +11,17 @@
 			Welcome to SchoolNotes. Create your account with the following steps:
 			<ul class="menu">
 				<li>Manage departments / Add/Remove Courses <br/>
-					<?= $this->html->link("Departments","/Departments/"); ?>
+					<?= $this->html->link("Departments","/admin/Departments/"); ?>
 				</li>
 				<!--
 				<?php if(($model->departments)&&(count($model->departments) > 0)){ ?>
 					<li>Create a list of courses <br/>
-						<?= $this->html->link("Courses","/Courses/"); ?>
+						<?= $this->html->link("Courses","/admin/Courses/"); ?>
 					</li>
 				<?php } ?>
 				-->
 				<li>Create a list of instructors/professors <br/>
-					<?= $this->html->link("Instructors","/Instructors/"); ?>
+					<?= $this->html->link("Instructors","admin/Instructors/"); ?>
 				</li>
 				<li>Initialize a semester <br/>
 					<?= $this->html->link("Semesters","/admin/semesters"); ?>

@@ -9,6 +9,8 @@ use app\models\School, app\models\Department, app\models\Instructor, app\models\
 use app\models\ViewModels\AdminVM, app\models\ViewModels\AdminCoursesVM;
 use app\models\ViewModels\CourseVM;
 use notes\security\Sentinel;
+use notes\security\RoleManager;
+
 use \DateTime;
 
 
@@ -43,6 +45,9 @@ class AdminController extends Controller{
 	}
 	
 	public function index(){
+		
+		$user = Sentinel::getAuthenticatedUser();
+		if((!$user)||(!RoleManager::IsUserInRole($user,'Administrator' ))){ $this->redirect('/accounts/login'); }
 		
 		$em = Connections::get('default')->getEntityManager();
 		$configContext = $em->getRepository('app\models\Configuration');
