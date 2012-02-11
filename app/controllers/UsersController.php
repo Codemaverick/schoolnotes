@@ -10,6 +10,7 @@ use \lithium\data\Connections;
 use \lithium\action\Controller;
 use notes\web\FormCollection;
 use notes\security\Sentinel;
+use notes\utilities\AppUtilities;
  
 
 use app\models\School, app\models\Department, app\models\Instructor;	
@@ -64,6 +65,8 @@ class UsersController extends Controller{
 			if($pResults){
 				$dashVM->profile = $pResults[0];
 			}
+			
+			$dashVM->semester = AppUtilities::getCurrentSemester();
 			
 			$data['model'] = $dashVM;
 			$this->set($data);

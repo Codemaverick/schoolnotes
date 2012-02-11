@@ -9,6 +9,7 @@ use \lithium\action\Controller;
 use app\models\Homework, models\CourseSection, models\Instructor;	
 use app\models\ViewModels\DashboardVM;
 use app\models\ViewModels\CourseVM;
+use app\models\ViewModels\CourseViewVM;	
 
 use notes\web\FormCollection;
 use \DateTime;
@@ -31,13 +32,12 @@ class HomeworksController extends Controller{
 	public function index($courseId, $section){
 		
 		$em = Connections::get('default')->getEntityManager();
-		$course = $this->em->getRepository('models\Course')->find($courseId);
-		$section = $this->sContext->find($section);
-		$hw = $this->dbContext->findAll(); //retrieve the id of the current semester
 		
-		$data['homeworks'] = $hw;
-		return $this->render($data);
+		$username = $this->request->params['username'];
+		$model = CourseViewVM::loadHWView($username, $section);
 		
+		$data = array('model'=> $model);
+		$this->render(array('layout'=>'profiles'));
 	}
 	
 	public function create($id)
@@ -251,7 +251,7 @@ class HomeworksController extends Controller{
 			return null;
 		}
 	}
-	
+
 	
 }
 

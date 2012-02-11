@@ -28,7 +28,7 @@ class Homework
 	/**
 	 * @ManyToOne(targetEntity="CourseSection")
 	 */
-	private $coursesection;
+	private $courseSection;
 	
 	/**
 	 * @OneToMany(targetEntity="Attachment", mappedBy="ClassNote")

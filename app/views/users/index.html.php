@@ -1,20 +1,23 @@
 <?php $this->title($model->professor->getUser()->getFullName()); ?>
 <div class="row profile_header">
-	<?php echo $this->_render('element', 'profile_nav'); ?>
+	<?php echo $this->_render('element', 'profile_view'); ?>
 </div>
-<div class="row shell">
-	<div class="shell_profile span-one-third">
-		<?php echo $this->_render('element', 'profile_public_panel'); ?>
+<div class="shell">
+	<div class="accordion">
+		<h3>Current Courses - <?php echo ($model->semester) ? $model->semester->getName() : "No Current Semester" ?></h3>
 	</div>
-	<div class="shell_courses span-two-third">
-		<h3>Spring 2011<!-- Update with correct dynamic semester --></h3>
-		<h4>Current Courses </h4>
+	<div class="accordion">
+		<h4 class="section_header">Archives</h4>
 		<ul class="course_list">
 		<?php 
 			$sectionList = $model->professor->getCourses()->toArray();
+			$user = $model->professor->getUser();
 			foreach($sectionList as $sec){
 				$course = $sec->getCourse();
-				echo '<li>' . $this->html->link($course->getName(), '/courseview/show/' . $sec->getId()) . '</li>';
+				echo '<li>';  
+				echo '<span class="semester_name">' . $sec->getSemester()->getName() . '</span>';
+				echo $this->html->link($course->getName(), '/professors/'. $user->getUserName() .'/courseview/show/' . $sec->getId()); 
+				echo '</li>';
 			}
 			
 			 ?>

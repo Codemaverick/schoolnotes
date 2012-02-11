@@ -13,6 +13,7 @@ use app\models\ViewModels\CourseViewVM;
 use \lithium\data\Connections;
 use \lithium\action\Controller;
 use notes\web\FormCollection;
+use notes\security\Sentinel;
 
 class CourseViewController extends Controller{
 
@@ -42,7 +43,8 @@ class CourseViewController extends Controller{
 		$model->announcements = $this->annContext->findAll();
 		
 		$data['model'] = $model;
-		return $this->set($data);
+		$this->set($data);
+		$this->render(array('layout'=>'profiles'));
 		
 	}
 	
@@ -110,7 +112,9 @@ class CourseViewController extends Controller{
 		$this->annContext = $this->em->getRepository('app\models\Announcement');
 		
 		$model = new CourseViewVM();
-	
+		$username = $this->request->params['username'];
+		$model = Sentinel::loadInstructor($username, $model);
+					
 		$model->coursesection = $this->section->find($id);
 		
 		$model->course = $model->coursesection->getCourse();
@@ -122,6 +126,7 @@ class CourseViewController extends Controller{
 		$data = array('model'=> $model);
 		
 		$this->set($data);
+		$this->render(array('layout'=>'profiles'));
 		
 	}
 	

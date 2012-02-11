@@ -12,6 +12,8 @@ use \lithium\action\Controller;
 use app\models\ClassNote, models\Department, models\Instructor;	
 use app\models\ViewModels\DashboardVM;
 use app\models\ViewModels\CourseVM;
+use app\models\ViewModels\CourseViewVM;	
+
 use notes\web\FormCollection;
 use notes\utilities\AppUtilities;
 use \DateTime;
@@ -37,12 +39,20 @@ class ClassNotesController extends Controller{
 		$em = Connections::get('default')->getEntityManager();
 		$dbContext = $em->getRepository('app\models\ClassNote');
 		
-		$course = $em->getRepository('models\Course')->find($courseId);
-		$section = $em->getRepository('models\CourseSection')->find($section);
-		$notes = $this->dbContext->findAll(); //retrieve the id of the current semester
+		$username = $this->request->params['username'];
+		$model = CourseViewVM::loadNotesView($username, $section);
 		
-		$data['notes'] = $notes;
+		//$course = $em->getRepository('app\models\Course')->find($courseId);
+		//$section = $em->getRepository('app\models\CourseSection')->find($section);
+		//$notes = $dbContext->findAll(); //retrieve the id of the current semester
+		$query = $em->createQuery('SELECT n FROM app\models\ClassNote n WHERE n.courseSection = :sec');
+		$query->setParameter('sec', $model->coursesection);
+		
+		$data = array();
+		$model->classnotes = $query->getResult();
+		$data['model'] = $model;
 		$this->set($data);
+		$this->render(array('layout'=>'profiles'));
 		
 	}
 	
@@ -131,16 +141,23 @@ class ClassNotesController extends Controller{
 		
 		$note = new ClassNote();
 		$nt = $dbContext->find($Id);
-		//echo var_dump($sc);
+		
 		if($nt != null){
 			$note = $nt;
+			$username = $this->request->params['username'];
+			$section = $note->getCourseSection();
+			$model = CourseViewVM::loadNotesView($username, $section->getId());
+			//echo var_dump($sc);
+			
 			$data = array();
-			$data['note'] = $note;			
-			$data['course'] = $note->getCourseSection()->getCourse();
-			$data['instructor'] = $note->getCourseSection()->getInstructor();
+			$data['note'] = $note;
+			$data['model'] = $model;			
+			//$data['course'] = $note->getCourseSection()->getCourse();
+			//$data['instructor'] = $note->getCourseSection()->getInstructor();
 			//var_dump($section->getCourse());
 			
 			$this->set($data);
+			$this->render(array('layout'=>'profiles'));
 		}//else throw 404
 	
 	}
@@ -233,6 +250,10 @@ class ClassNotesController extends Controller{
 		}else{
 			return null;
 		}
+	}
+	
+	private function loadCourseView(){
+	
 	}
 	
 	

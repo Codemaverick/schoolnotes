@@ -26,7 +26,7 @@
 	<?php echo $this->html->link('Icon', null, array('type' => 'icon')); ?>
 </head>
 <body class="app">
-<div class="topbar">
+<div class="masthead">
       <div class="fill">
         <div class="container">
           <?php echo $this->html->link("SchoolNotes", '/', array('class'=>'brand')); ?>

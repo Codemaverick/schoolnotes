@@ -21,6 +21,7 @@ use lithium\core\Libraries;
 use lithium\net\http\Router;
 use lithium\core\Environment;
 use lithium\action\Dispatcher;
+use lithium\action\Response;
 
 /**
  * This filter intercepts the `run()` method of the `Dispatcher`, and first passes the `'request'`
@@ -50,6 +51,18 @@ Dispatcher::applyFilter('run', function($self, $params, $chain) {
 		file_exists($file) ? include $file : null;
 	}
 	return $chain->next($self, $params, $chain);
+});
+
+Dispatcher::applyFilter('run', function($self, $params, $chain){
+	
+	$request = Router::process($params['request']);
+	
+	if(in_array('invaliduser', $request->params)){
+		$params['request']->url = '/';
+	}
+	
+	return $chain->next($self, $params, $chain);
+	
 });
 
 ?>

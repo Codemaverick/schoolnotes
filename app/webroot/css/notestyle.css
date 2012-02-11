@@ -1,11 +1,149 @@
+/*--- Layout ---*/
+
+
 BODY{
 	margin-top:50px;
+	font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	line-height: 1.5em;
+	color: #0d0d0d;
+	background-color: #fff;
+
 }
+
+.masthead {
+  height: 60px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  overflow: visible;
+  background-color:#C3CEC8;
+}
+
+.masthead .brand{
+	margin-left:-20px;
+}
+
+.masthead .brand a{
+	text-decoration:none;
+	color:#FFF;
+}
+
+.masthead .brand a:hover{
+	color:#fff;
+}
+
+.masthead a {
+  color: #bfbfbf;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.masthead h3 a:hover, .masthead .brand:hover, .masthead ul .active > a {
+  background-color: #333;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.masthead-inner, .masthead .fill {
+  background-color:#C3CEC8;
+  background-repeat: repeat-x;
+  width:100%;
+  /*background-image: -khtml-gradient(linear, left top, left bottom, from(#333333), to(#222222));
+  background-image: -moz-linear-gradient(top, #333333, #222222);
+  background-image: -ms-linear-gradient(top, #333333, #222222);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #333333), color-stop(100%, #222222));
+  background-image: -webkit-linear-gradient(top, #333333, #222222);
+  background-image: -o-linear-gradient(top, #333333, #222222);
+  background-image: linear-gradient(top, #333333, #222222);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#333333', endColorstr='#222222', GradientType=0);
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);*/
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.masthead .container{
+	height:100%;
+	background-color:#1E3B42; /* #6A8782; */
+	margin-left:auto;
+	margin-right:auto;
+	/*width:960px;*/
+}
+
+.masthead .row > [class*="span"] {
+    margin-left: 10px;
+}
+
+.masthead p a:hover {
+  background-color: transparent;
+  color: #ffffff;
+}
+
+.masthead h3 {
+  position: relative;
+}
+
+.masthead h3 a, .masthead .brand {
+  float: left;
+  display: block;
+  padding: 8px 20px 12px;
+  margin-left: -20px;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 200;
+  line-height: 1;
+}
+.masthead p {
+  margin: 0;
+}
+
+/* Masthead Navigation */
+
+.masthead .nav {
+  display: block;
+  float: left;
+  margin: 0 10px 0 0;
+  position: relative;
+  left: 0;
+}
+.masthead > .nav > li {
+  display: block;
+  float: left;
+}
+.masthead SPAN > .nav a {
+  display: block;
+  float: none;
+  padding: 10px 10px 11px;
+  line-height: 19px;
+  text-decoration: none;
+}
+.masthead div > ul a:hover, .nav a:hover {
+  color: #ffffff;
+  text-decoration: none;
+}
+.masthead div > ul .active > a, .nav .active > a {
+  background-color: #222;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.row .alpha{
+	margin-left:0px;
+	padding-left:5px;
+}
+/*  End Navigation */
 
 .row.shell > [class*="span"] {
   display: inline;
   float: left;
-  margin-left: 19px; /* Need this for the margin */
+  /*margin-left: 19px; /* Need this for the margin */
+}
+
+.login_status UL{
+	list-style-type: none;
+	text-align: right;
+	float:right;
+	margin: 3px 5px 3px;
 }
 
 
@@ -19,18 +157,121 @@ BODY{
 
 /* Profile Navigation */
 #profile_nav{
-	margin-top:60px;
+	margin-top:30px;
+}
+
+.profiles_container{
+	/*background-color:#F2E9FA;
+}
+
+.profiles_container span:first-child{
+	margin-left:0px;
 }
 
 .profiles_container .shell{
-	border:solid 1px #ccc;
+	/*border:solid 1px #ccc;*/
 }
 
 .shell_profile{
 	margin-top:25px;
 }
 
+.shell{
+	padding-top:10px;
+	background-color: #BFD6DD;
+	padding-bottom:5px;
+	min-height: 300px;
+
+}
+
 .formItem LABEL{
 	text-align:left;
 	width:auto;
 }
+
+/*--- Basics ---*/
+h1, h2, h3, h4, h5, h6 {
+	font-family: Helvetica, Arial, sans-serif;
+	font-weight:normal;
+	color:#111;
+	line-height: 1;
+	margin: 0.5em 0 0.5em 0;*/
+}
+h1 { font-size: 2.6em; }
+h2, h5 { font-size: 2em; color: #666; }
+h3, h6 { font-size: 1.7em; color: #00a8e6; }
+h4 { font-size: 1.4em; }
+h5 { font-size: 1.2em; }
+h6 { font-size: 1em; }
+p { margin-bottom: 1em; }
+strong { font-weight: bold; }
+em { font-style: italic; }
+a { text-decoration: none; color: #666; }
+a, h1 a, h2 a { text-decoration: none; }
+a:hover { color: #00bbff; }
+a:visited:hover { color: #ff59ff; }
+a img { border: none; }
+
+.profile_header{
+	margin-top:25px;
+	margin-bottom:25px;
+}
+
+.profile_header h1{
+	margin-bottom:0px;
+	line-height: normal;
+}
+
+.profile_header h3{
+	margin-top:0px;
+}
+
+
+.shell > .accordion{
+	margin:5px 10px;
+	border-bottom: solid 1px #F2E9FA;
+}
+
+.accordion h3{
+	font-size: 2em; color: #3B5359;
+}
+
+.accordion h4.section_header{
+	margin-top:10px;
+	font-size:0.8em;
+	font-weight: 600;
+	text-transform: uppercase;
+	color:#F2E9FA;
+	border-bottom: dotted 1px #F2E9FA;
+	width:100px;
+	padding-bottom: 3px;
+}
+
+UL.course_list, UL.course_menu{
+	list-style-type: none;
+	margin-left: 0px;
+}
+
+.course_list{
+	font-size:1.2em;
+}
+
+.course_list A{
+	text-decoration: none;
+}
+
+.course_list LI{
+	padding:5px 8px;
+}
+
+.course_list SPAN.semester_name{
+	width:100px;
+	float:left;
+	font-size:0.8em;
+	
+}
+
+.course_list LI:hover{
+	background-color: #FFF;
+}
+

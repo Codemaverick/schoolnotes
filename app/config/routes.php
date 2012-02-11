@@ -41,11 +41,12 @@ Router::connect('/', 'Pages::index');
 //Profile Pages
 
 Router::connect("/professors/{:username}", array('controller'=>'Users'));
-Router::connect("/professors/{:username}/{:controller}", array(), array('continue'=> true,'handler'=> function($request){
+Router::connect("/professors/{:username}/{:args}", array(), array('continue'=> true,'handler'=> function($request){
 	$username = $request->params['username'];
  	//echo "Request Username = " . $request->params['username'];
  	//echo "Request Controller = " . $request->params['controller'];
- 	
+ 	//echo "In the router handler part";
+
 	$sen = new Sentinel();
 	$results = $sen->findUsersByName($username);
 		//echo var_dump($username);
@@ -55,14 +56,10 @@ Router::connect("/professors/{:username}/{:controller}", array(), array('continu
 		$request->params['action'] = "listAll";
 		return $request;
 	}else{
-		echo "User not found. Returning";
+		$request->params['invaliduser'] = true;
 		return $request;
 	}
 	
-	
-	//$request->params['action'] = "display";
-	//print_r($request);
-	//return $request;
 })
 
 );

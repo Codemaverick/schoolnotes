@@ -21,25 +21,28 @@
     <!-- Le styles -->
 	<?php echo $this->html->charset();?>
 	<title>Profiles <?php echo $this->title(); ?></title>
-	<?php echo $this->html->style(array('bootstrap','notestyle','debug', 'lithium')); ?>
+	<?php echo $this->html->style(array('bootstrap','notestyle')); ?>
 	<?php echo $this->scripts(); ?>
 	<?php echo $this->html->link('Icon', null, array('type' => 'icon')); ?>
 </head>
 <body class="app">
-<div class="topbar">
-      <div class="fill">
-        <div class="container">
-          <?php echo $this->html->link("SchoolNotes", '/', array('class'=>'brand')); ?>
-          <ul class="nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-          <p class="pull-right"><?php echo $this->_render('element', 'login_status'); ?></p>
-        </div>
-      </div>
-    </div>
-  
+	<div class="masthead" id="profile_main">
+		<div class="container row">
+			<div id="" class="span3 alpha">
+				 <?php echo $this->html->link("SchoolNotes", '/'); ?>
+			</div>
+			<div class="span9">
+				<ul class="nav">
+		            <li class="active"><a href="#">Home</a></li>
+		            <li><a href="#about">About</a></li>
+		            <li><a href="#contact">Contact</a></li>
+		        </ul>
+		     </div>
+		     <div class="span4 login_status">
+		     	<?php echo $this->_render('element', 'login_status'); ?>
+		     </div>	
+       	</div>
+	</div>
 	<div class="container profiles_container">
 		
 		<?php echo $this->content(); ?>
@@ -48,6 +51,7 @@
 	
 	<footer>
 	<div class="container" id="footer">
+			<p>&copy; Copyrights <?= date('Y'); ?> - SchoolNotes</p>
 			<p>Powered by <?php echo $this->html->link('Lithium', 'http://lithify.me/'); ?>.</p>
 	</div>
 	</footer>

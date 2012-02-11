@@ -62,6 +62,7 @@ class Course
 	public function setCourseCode($code) { $this->courseCode = $courseCode; }
     public function getCourseCode() {  return $this->courseCode; }
 	public function setSection($section) { $this->section = $section; }
-    public function getSection() {  return $this->section; }
+    public function getSection() {  return $this->section->count() > 0 ? $this->section->first() : null ; }
+    public function getSections() { return $this->section; }
 
 }
