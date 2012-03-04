@@ -37,6 +37,7 @@ class HomeworksController extends Controller{
 		$model = CourseViewVM::loadHWView($username, $section);
 		
 		$data = array('model'=> $model);
+		$this->set($data);
 		$this->render(array('layout'=>'profiles'));
 	}
 	
@@ -91,13 +92,16 @@ class HomeworksController extends Controller{
 		//echo var_dump($sc);
 		if($hw != null){
 			$homework = $hw;
+			$section = $homework->getCourseSection();
+			$username = $this->request->params['username'];
+			$model = CourseViewVM::loadHWView($username, $section->getId()); //inefficient - loads all hws
+			
 			$data = array();
 			$data['homework'] = $homework;
-			$data['section'] = $homework->getCourseSection();			
-			$data['course'] = $homework->getCourseSection()->getCourse();
-			//var_dump($section->getCourse());
+			$data['model'] = $model;			
 			
 			$this->set($data);
+			$this->render(array('layout'=>'profiles'));
 		}//else throw 404
 	
 	}

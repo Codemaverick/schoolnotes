@@ -10,19 +10,24 @@
 	</div>
 	<div class="span12 shell_content">
 		<h3>Homeworks</h3>
-		<h3><?php echo $homeworks[0]->getCourseSection();</h3>
 		<div>
-			<ul>
-				<?php foreach($homeworks as $hw){ ?>
-					<li><?php echo anchor('dashboard/homeworks/show/'.$hw->getId(), $hw->getName(), array('title'=> $hw->getName())); ?>  |
-					 <?php echo anchor('dashboard/homeworks/show/'.$hw->getId(), "edit"); ?> |
-					 <?php echo anchor('dashboard/homeworks/show/'.$hw->getId(), "delete"); ?> |
-					 <?php echo anchor('dashboard/homeworks/show/'. $hw->getDepartment()->getId() . '/' .$hw->getId(), "sections"); ?>
-					 </li>
-				<?php } ?>
-			</ul>
+			<div>
+			<?php 
+				 if(($model->homeworks) && (count($model->homeworks) > 0)){ ?>
+				<ul>
+					<?php foreach($model->homeworks as $hw){ ?>
+						<li><?php echo $this->html->link($hw->getName(), '/professors/'.$user->getUserName().'/homeworks/show/' . $hw->getId()); ?>
+						<br/>
+						</li>
+					<?php } ?>
+				</ul>
+			<?php } else { ?>
+				<p>This class has no published homeworks. <br/>
+			<?php } ?>
+			</p>
+		</div>
 			
-			<?php echo anchor('/dashboard/homeworks/create', "Add New Homework"); ?>
+			
 		</div>
 	</div>
 </div>

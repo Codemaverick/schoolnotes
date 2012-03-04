@@ -64,7 +64,7 @@ class Homework
     public function getDateDue() { return $this->dateDue->format('Y-m-d'); }
     
     public function setCourseSection($cs) { $this->coursesection = $cs; }
-    public function getCourseSection() {  return $this->coursesection; }
+    public function getCourseSection() {  return $this->courseSection; }
 	public function setAttachments($attachments) { $this->attachments = $attachments; }
     public function getAttachments() {  return $this->attachments; }
 	

@@ -1,10 +1,15 @@
-<?php set_page_title($homework->getName() . " - " . $course->getName() . " - " . $section->getSection()); ?>
-<h1><?php echo $course->getName() . " - " . $homework->getCourseSection()->getSection(); ?></h1>
-
-<h3><?php echo $homework->getName() ?></h3>
-<h4><?php echo $homework->getCourseSection()->getSemester()->getName(); ?></h4>
-<div>
-	
+<?php $this->title($model->course->getName()); ?>
+<?php $user = $model->professor->getUser(); ?>
+<?php $this->title($model->professor->getUser()->getFullName() . " - " . $model->course->getName() . " - " . $model->coursesection->getSection()); ?>
+<div class="row profile_header">
+	<?php echo $this->_render('element', 'profile_courseview'); ?>
+</div>
+<div class="row shell">
+	<div class="span4 shell_menu">
+		<?php echo $this->_render('element', 'course_view_nav'); ?>
+	</div>
+	<div class="span12 shell_content">
+	<div>
 		<div class="formItem">
 			This homework is due on:<br/>
 			<?php echo $homework->getDateDue(); ?>
@@ -16,8 +21,8 @@
 			Attachments:
 			<?php //echo $school->getAddress(); ?>
 		</div>
-	
-</div>
-<div>
-	<p><?php echo anchor("/dashboard/courseview/show/". $homework->getCourseSection()->getId(),"Back to Index"); ?></p>
+	</div>
+	<div>
+		<p><?php echo $this->html->link("Back to Index", "/professors/". $user->getUserName() . "/homeworks/index/". $model->course->getId() . '/'. $homework->getCourseSection()->getId()); ?></p>
+	</div>
 </div>
