@@ -8,10 +8,10 @@
 <div id="profile_nav" class="span6">
 <nav>
 	<ul class="">
-		<li>Office: <?= $model->professor->getOffice(); ?></li>
+		<li>Office: <?php echo $model->professor->getOffice(); ?></li>
 		<?php $numbers = $model->profile->getPhoneNumbers(); ?>
-		<li>Phone: <?= $numbers[0]->getNumber(); ?></li>
-		<li>Email: <?= $model->professor->getUser()->getEmail(); ?></li>
+		<li>Phone: <?php echo $numbers[0]->getNumber(); ?></li>
+		<li>Email: <?php echo $model->professor->getUser()->getEmail(); ?></li>
 		<li><?php echo $this->html->link("Profile", '/professors/'. $username . "/profile/"); ?></li>
 	</ul>
 </nav>

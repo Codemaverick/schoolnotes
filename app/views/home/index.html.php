@@ -35,7 +35,9 @@
 		<input type="submit" value="Search" class="formBtn" id="course_submit_btn" />
 	</form>
 </div>
+<div>
 
+</div>
 </section>
 
 <?php //echo render_partial("_scripts") ?>

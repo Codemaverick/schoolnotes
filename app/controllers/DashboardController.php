@@ -39,7 +39,6 @@ class DashboardController extends Controller{
 			redirect('/accounts/login');
 		}
 		
-		
 	}
 	
 	public function index(){
@@ -50,32 +49,17 @@ class DashboardController extends Controller{
 		$user = $sen->getLoggedInUser();
 		if($user){
 			
-			$dbContext = $em->getRepository('app\models\Instructor');
-			$query = $em->createQuery('SELECT s FROM app\models\Instructor s WHERE s.user = :usr');
-			$query->setParameter('usr', $user);
-			$results = $query->getResult();
-			$prof = $results[0]; //temp default professor
-			
 			$dashVM = new DashboardVM();
-			$dashVM->professor = $prof;
-			
-			$query = $em->createQuery('SELECT s FROM app\models\CourseSection s WHERE s.instructor = :ins');
-			$query->setParameter('ins', $prof);
-			$sections = $query->getResult();
-			
-			foreach( $sections as $sec){
-				$dashVM->courses->add($sec->getCourse());
-			}
-			
-			//$dashVM->courses = $courses;
-			
+			$dashVM = DashboardVM::loadDefaultView($user, $dashVM);
+		
 			$data['model'] = $dashVM;
 			$this->set($data);
+			$this->render(array('layout'=>'dashboard'));
+			
 		}else{
 			$this->redirect('Accounts::login');
 		}
 
-		
 	}
 	
 	public function create()
