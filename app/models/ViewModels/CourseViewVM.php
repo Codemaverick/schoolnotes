@@ -57,7 +57,7 @@ class CourseViewVM
 		
 	}
 	
-	public static function loadNotesView($username, $section_id){
+	public static function loadNotesView($username, $section_id, $itemId = null){
 	
 		$model = new CourseViewVM();
 		$em = Connections::get('default')->getEntityManager();
@@ -78,7 +78,7 @@ class CourseViewVM
 		return $model;
 	}	
 	
-	public static function loadHWView($username, $section_id){
+	public static function loadHWView($username, $section_id, $itemId = null){
 	
 		$model = new CourseViewVM();
 		$em = Connections::get('default')->getEntityManager();
@@ -99,18 +99,24 @@ class CourseViewVM
 		return $model;
 	}	
 	
-	public static function loadAnnoucementsView($username, $section_id){
+	public static function loadAnnouncementsView($username, $section_id, $itemId = null){
 	
 		$model = new CourseViewVM();
 		$em = Connections::get('default')->getEntityManager();
 		$section = $em->getRepository('app\models\CourseSection');
-		$hwContext = $em->getRepository('app\models\Homework');
+		$hwContext = $em->getRepository('app\models\Announcement');
 		$model = Sentinel::loadInstructor($username, $model);
 					
 		$model->coursesection = $section->find($section_id);
 		
-		$query = $em->createQuery('SELECT a FROM app\models\Announcement a WHERE a.courseSection = :sec');
-		$query->setParameter('sec', $model->coursesection);
+		if(!$itemId){
+			$query = $em->createQuery('SELECT a FROM app\models\Announcement a WHERE a.coursesection = :sec');
+			$query->setParameter('sec', $model->coursesection);
+		}else{
+			$query = $em->createQuery('SELECT a FROM app\models\Announcement a WHERE a.coursesection = :sec AND a.id = :id');
+			$query->setParameters(array('sec' => $model->coursesection, 'id' => $itemId));
+		}
+		
 		$model->announcements =  $query->getResult();
 		
 		$model->course = $model->coursesection->getCourse();
@@ -119,6 +125,21 @@ class CourseViewVM
 		
 		return $model;
 	}	
+	
+	public static function loadCourseHeader($username, $section_id){
+	
+		$model = new CourseViewVM();
+		$em = Connections::get('default')->getEntityManager();
+		$section = $em->getRepository('app\models\CourseSection');
+		$model = Sentinel::loadInstructor($username, $model);
+					
+		$model->coursesection = $section->find($section_id);
+		$model->course = $model->coursesection->getCourse();
+		
+		$model->professor = $model->coursesection->getInstructor();
+		
+		return $model;
+	}
 
 }
 

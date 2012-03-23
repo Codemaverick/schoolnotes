@@ -103,7 +103,13 @@ class CourseViewController extends Controller{
 		
 	}
 	
-	public function show($id)
+	/*****
+		<params>
+			coursesection : required
+			username : optional - uses url based username if not passed as a parameter
+	
+	*/
+	public function show($id, $uname = null)
 	{
 		$this->em = Connections::get('default')->getEntityManager();
 		$this->section = $this->em->getRepository('app\models\CourseSection');
@@ -112,7 +118,7 @@ class CourseViewController extends Controller{
 		$this->annContext = $this->em->getRepository('app\models\Announcement');
 		
 		$model = new CourseViewVM();
-		$username = $this->request->params['username'];
+		$username = $uname ? $uname : $this->request->params['username'];
 		$model = Sentinel::loadInstructor($username, $model);
 					
 		$model->coursesection = $this->section->find($id);
@@ -132,8 +138,14 @@ class CourseViewController extends Controller{
 	
 	public function manage($id){
 	//requires validation  
-	
-		return self::show($id);
+		$sen = new Sentinel();
+		$user = $sen->getLoggedInUser(); 
+		
+		if(!$user){
+			$this->redirect("Accounts::LogOn");
+		}
+
+		return self::show($id, $user->getUsername());
 		
 	}
 	

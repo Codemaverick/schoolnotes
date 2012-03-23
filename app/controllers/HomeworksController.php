@@ -12,6 +12,7 @@ use app\models\ViewModels\CourseVM;
 use app\models\ViewModels\CourseViewVM;	
 
 use notes\web\FormCollection;
+use notes\security\Sentinel;
 use \DateTime;
 
 class HomeworksController extends Controller{
@@ -54,12 +55,8 @@ class HomeworksController extends Controller{
 	
 	public function create_new(){
 		
-		$sen = new Sentinel();	
-		$user = $sen->getLoggedInUser();
-		
-		if(!$user){
-			$this->redirect('Accounts::login');
-		}
+		$user = Sentinel::getAuthenticatedUser(); 
+		if(!$user){ $this->redirect("Accounts::LogOn"); }
 		
 		$em = Connections::get('default')->getEntityManager();
 		$sContext = $em->getRepository('app\models\CourseSection');
@@ -104,6 +101,50 @@ class HomeworksController extends Controller{
 			$this->render(array('layout'=>'profiles'));
 		}//else throw 404
 	
+	}
+	
+	public function details($id){
+		
+		$user = Sentinel::getAuthenticatedUser(); 
+		if(!$user){ $this->redirect("Accounts::LogOn"); }
+		
+		$em = Connections::get('default')->getEntityManager();
+		$dbContext = $em->getRepository('app\models\Homework');
+		
+		$homework = new Homework();
+		$hw = $dbContext->find($id);
+		//echo var_dump($sc);
+		if($hw != null){
+			$homework = $hw;
+			$section = $homework->getCourseSection();
+			$username = $user->getUsername();
+			$model = CourseViewVM::loadHWView($username, $section->getId()); //inefficient - loads all hws
+			
+			$data = array();
+			$data['homework'] = $homework;
+			$data['model'] = $model;			
+			
+			$this->set($data);
+			$this->render(array('layout'=>'profiles'));
+		}//else throw 404
+		
+	}
+	
+	
+	public function manage($id){
+		$user = Sentinel::getAuthenticatedUser(); 
+		if(!$user){ $this->redirect("Accounts::LogOn"); }
+		
+		$em = Connections::get('default')->getEntityManager();
+		$dbContext = $em->getRepository('app\models\Homework');
+		
+		$username = $user->getUsername();
+		$model = CourseViewVM::loadHWView($username, $id);
+		
+		$data = array('model'=> $model);
+		$this->set($data);
+		$this->render(array('layout'=>'profiles'));
+		
 	}
 	
 	public function listAll(){

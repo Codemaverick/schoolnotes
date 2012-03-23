@@ -9,6 +9,7 @@ use app\models\Announcement, app\models\CourseSection;
 use app\models\Homework, app\models\Instructor;	
 use app\models\ViewModels\DashboardVM;
 use app\models\ViewModels\CourseVM;
+use app\models\ViewModels\CourseViewVM;	
 
 use notes\web\FormCollection;
 use notes\security\Sentinel;
@@ -34,22 +35,28 @@ class AnnouncementsController extends Controller{
 		
 		$em = Connections::get('default')->getEntityManager();
 		$course = $em->getRepository('app\models\Course')->find($courseId);
-		$sContext = $em->getRepository('app\models\CourseSection');
-		$section = $sContext->find($section);
 		
-		$query = $em->createQuery('SELECT s FROM models\Announcement s WHERE s.coursesection = :sec');
-		$query->setParameter('sec', $section->getId());
-		$anncmt = $query->getResult();
+		$username = $this->request->params['username'];
+		$model = CourseViewVM::loadAnnouncementsView($username, $section);
 		
-		//s$anncmt = $this->dbContext->findBy(array('coursesection'=>$section)); //retrieve the id of the current semester
-		
-		$data['announcements'] = $anncmt;
-		$data['section'] = $section;
-		$data['course'] = $course;
-		
+		$data = array('model'=> $model);
 		$this->set($data);
+		$this->render(array('layout'=>'profiles'));
 		
 	}
+	
+	public function manage($section){
+		$user = Sentinel::getAuthenticatedUser();
+		if(!$user){ $this->redirect('Accounts::login');}
+		
+		$username = $user->getUsername();
+		$model = CourseViewVM::loadAnnouncementsView($username, $section);
+		
+		$data = array('model'=> $model);
+		$this->set($data);
+		$this->render(array('layout'=>'profiles'));
+	}
+
 	
 	public function listAll(){
 		$user = $this->request->params['user'];
@@ -137,26 +144,52 @@ class AnnouncementsController extends Controller{
 		$this->redirect('/dashboard/courseview/show/' . $section->getId());
 	}
 	
-	public function show($Id)
+	public function show($id)
 	{
 		$em = Connections::get('default')->getEntityManager();
 		$dbContext = $em->getRepository('app\models\Announcement');
 		$sContext = $em->getRepository('app\models\CourseSection');
 		
 		$ann = new Announcement();
-		$a = $dbContext->find($Id);
+		$a = $dbContext->find($id);
 		//echo var_dump($sc);
 		if($a != null){
 			$ann = $a;
+			$section = $a->getCourseSection();
 			$data = array();
-			$data['announcement'] = $ann;
-			$data['section'] = $ann->getCourseSection();			
-			$data['course'] = $ann->getCourseSection()->getCourse();
-			//var_dump($section->getCourse());
+			$username = $this->request->params['username'];
+			$model = CourseViewVM::loadAnnouncementsView($username, $section->getId(), $id); //inefficient - loads all hws
 			
+			$data['model'] = $model;
 			return $this->set($data);
 		}//else throw 404
 	
+	}
+	
+	public function details($id){
+		
+		$user = Sentinel::getAuthenticatedUser();
+		if(!$user){ $this->redirect('Accounts::login');}
+		
+		$em = Connections::get('default')->getEntityManager();
+		$dbContext = $em->getRepository('app\models\Announcement');
+		$sContext = $em->getRepository('app\models\CourseSection');
+		
+		$ann = new Announcement();
+		$a = $dbContext->find($id);
+		//echo var_dump($sc);
+		if($a != null){
+			$ann = $a;
+			$section = $a->getCourseSection();
+			$data = array();
+			$username = $user->getUsername();
+			$model = CourseViewVM::loadAnnouncementsView($username, $section->getId(), $id); //inefficient - loads all hws
+			
+			$data['model'] = $model;
+			$this->set($data);
+			$this->render(array('layout'=>'profiles'));
+		
+		}//else throw 404
 	}
 	
 	//need to enforce security here. Should only be able to edit classnotes that belong to you

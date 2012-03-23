@@ -155,6 +155,10 @@ BODY{
 	display:inline;
 }
 
+.left_edge{
+	margin-left:0;
+}
+
 /* Profile Navigation */
 #profile_nav{
 	margin-top:30px;
@@ -182,11 +186,6 @@ BODY{
 	padding-bottom:5px;
 	min-height: 300px;
 
-}
-
-.formItem LABEL{
-	text-align:left;
-	width:auto;
 }
 
 /*--- Basics ---*/
@@ -273,5 +272,23 @@ UL.course_list, UL.course_menu{
 
 .course_list LI:hover{
 	background-color: #FFF;
+}
+
+/******************************  FORMS ********************************/
+
+UL.formItems{
+	list-style-type:none;
+	width:100%;
+}
+
+.formItem LABEL{
+	text-align:left;
+	display:block;
+	float:none;
+	width:100%;
+}
+
+input.medium, textarea.medium{
+	width:60%;
 }
 

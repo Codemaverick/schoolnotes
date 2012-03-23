@@ -1,24 +1,39 @@
-<h1><?php echo $section->getCourse()->getName() . ' - ' . $section->getSection(); ?> </h1>
+<?php $this->title($model->course->getName()); ?>
+<?php $user = $model->professor->getUser(); ?>
+<?php $this->title($model->professor->getUser()->getFullName() . " - " . $model->course->getName() . " - " . $model->coursesection->getSection()); ?>
+<div class="row profile_header">
+	<?php echo $this->_render('element', 'profile_manage'); ?>
+</div>
+<div class="shell">
+	<h4>Create New Class/Lecture Note</h4>
 
-<h4>Create New Class/Lecture Note</h4>
-<div>
 	<form method="post" action="/dashboard/classnotes/create_new">
-		<div class="formItem">
-			<label>Name</label>
-			<input type="text" name="classnote[name]" value="" id="classnote_name" />
-		</div>
-		<div class="formItem">
-			<label>Text/Notes</label>
-			<textarea id="classnote_note" name="classnote[note]" value=""></textarea>
-		</div>
-		<div class="formItem">
-			<label>Attachment</label>
-			<input type="text" id="classnote_attachment" name="classnote[attachment]" value="" />
-		</div>
-		<div class="formItem">
-			<input type="hidden" name="classnote[section]" value="<?php echo $section->getId() ?>" />
-			<input type="submit" id="submitBtn" value="Create" />
-		</div>
+		<ul class="formItems">
+			<li>
+				<div class="formItem">
+					<label>Name</label>
+					<input type="text" name="classnote[name]" value="" id="classnote_name" class="formText medium" />
+				</div>
+			</li>
+			<li>
+				<div class="formItem">
+					<label>Text/Notes</label>
+					<textarea id="classnote_note" name="classnote[note]" value="" rows="10" class="formText medium"></textarea>
+				</div>
+			</li>
+			<li>
+				<div class="formItem">
+					<label>Attachment</label>
+					<input type="file" id="classnote_attachment" name="classnote[attachment]" value="" />
+				</div>
+			</li>
+			<li>
+				<div class="formItem">
+					<input type="hidden" name="classnote[section]" value="<?php echo $model->coursesection->getId() ?>" />
+					<input type="submit" id="submitBtn" value="Create" class="btn formBtn" />
+				</div>
+			</li>
+		</ul>
 		
 		
 	</form>

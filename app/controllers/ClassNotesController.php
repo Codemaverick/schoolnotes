@@ -16,6 +16,7 @@ use app\models\ViewModels\CourseViewVM;
 
 use notes\web\FormCollection;
 use notes\utilities\AppUtilities;
+use notes\Security\Sentinel;
 use \DateTime;
 
 class ClassNotesController extends Controller{
@@ -41,10 +42,7 @@ class ClassNotesController extends Controller{
 		
 		$username = $this->request->params['username'];
 		$model = CourseViewVM::loadNotesView($username, $section);
-		
-		//$course = $em->getRepository('app\models\Course')->find($courseId);
-		//$section = $em->getRepository('app\models\CourseSection')->find($section);
-		//$notes = $dbContext->findAll(); //retrieve the id of the current semester
+	
 		$query = $em->createQuery('SELECT n FROM app\models\ClassNote n WHERE n.courseSection = :sec');
 		$query->setParameter('sec', $model->coursesection);
 		
@@ -56,7 +54,29 @@ class ClassNotesController extends Controller{
 		
 	}
 	
+	
+	public function manage($section){
+		
+		$user = Sentinel::getAuthenticatedUser(); 
+		if(!$user){ $this->redirect("Accounts::LogOn"); }
+		
+		$em = Connections::get('default')->getEntityManager();
+		$dbContext = $em->getRepository('app\models\ClassNote');
+		
+		$model = CourseViewVM::loadNotesView($user->getUsername(), $section);
+		
+		$query = $em->createQuery('SELECT n FROM app\models\ClassNote n WHERE n.courseSection = :sec');
+		$query->setParameter('sec', $model->coursesection);
+		
+		$data = array();
+		$model->classnotes = $query->getResult();
+		$data['model'] = $model;
+		$this->set($data);
+		$this->render(array('layout'=>'profiles'));
+	}
+	
 	public function listAll(){
+	
 		$user = $this->request->params['user'];
 		$em = Connections::get('default')->getEntityManager();
 		$dbContext = $em->getRepository('app\models\ClassNote');
@@ -99,15 +119,18 @@ class ClassNotesController extends Controller{
 		$this->render(array('layout'=>'profiles'));
 	}
 	
-	public function create($id)
+	public function create($sectionId)
 	{
+		$user = Sentinel::getAuthenticatedUser(); 
+		if(!$user){ $this->redirect("Accounts::LogOn"); }
+		
 		$em = Connections::get('default')->getEntityManager();
-		$sContext = $em->getRepository('app\models\CourseSection');
-		$section = $sContext->find($id);
+		$model = CourseViewVM::loadCourseHeader($user->getUsername(), $sectionId);
 		$data = array();
-		$data['section'] = $section;
+		$data['model'] = $model;
 		
 		$this->set($data);
+		$this->render(array('layout'=>'profiles'));
 	}
 	
 	public function create_new(){
@@ -134,13 +157,13 @@ class ClassNotesController extends Controller{
 		$this->redirect('/dashboard/courseview/show/' . $section->getId());
 	}
 	
-	public function show($Id)
+	public function show($id)
 	{
 		$em = Connections::get('default')->getEntityManager();
 		$dbContext = $em->getRepository('app\models\ClassNote');
 		
 		$note = new ClassNote();
-		$nt = $dbContext->find($Id);
+		$nt = $dbContext->find($id);
 		
 		if($nt != null){
 			$note = $nt;
@@ -160,6 +183,35 @@ class ClassNotesController extends Controller{
 			$this->render(array('layout'=>'profiles'));
 		}//else throw 404
 	
+	}
+	
+	public function details($id){
+		$user = Sentinel::getAuthenticatedUser(); 
+		if(!$user){ $this->redirect("Accounts::LogOn"); }
+		
+		$em = Connections::get('default')->getEntityManager();
+		$dbContext = $em->getRepository('app\models\ClassNote');
+		
+		$note = new ClassNote();
+		$nt = $dbContext->find($id);
+		
+		if($nt != null){
+			$note = $nt;
+			$username = $user->getUsername();
+			$section = $note->getCourseSection();
+			$model = CourseViewVM::loadNotesView($username, $section->getId());
+			//echo var_dump($sc);
+			
+			$data = array();
+			$data['note'] = $note;
+			$data['model'] = $model;			
+			//$data['course'] = $note->getCourseSection()->getCourse();
+			//$data['instructor'] = $note->getCourseSection()->getInstructor();
+			//var_dump($section->getCourse());
+			
+			$this->set($data);
+			$this->render(array('layout'=>'profiles'));
+		}//else throw 404
 	}
 	
 	//need to enforce security here. Should only be able to edit classnotes that belong to you

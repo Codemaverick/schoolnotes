@@ -55,7 +55,7 @@ class UsersController extends Controller{
 			$sections = $query->getResult();
 			
 			foreach( $sections as $sec){
-				$dashVM->courses->add($sec->getCourse());
+				$dashVM->coursesections->add($sec->getCourse());
 			}
 			
 			$query2 = $this->em->createQuery('SELECT pr FROM app\models\Profile pr WHERE pr.instructor = :ins');

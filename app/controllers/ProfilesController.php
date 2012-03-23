@@ -38,9 +38,7 @@ class ProfilesController extends Controller{
 		$sen = new Sentinel();
 		$user = $sen->getLoggedInUser(); 
 		
-		if(!$user){
-			$this->redirect("Accounts::LogOn");
-		}
+		if(!$user){ $this->redirect("Accounts::LogOn"); }
 		
 		//$em = Connections::get('default')->getEntityManager();
 		$model = $this->getProfileView($user);
